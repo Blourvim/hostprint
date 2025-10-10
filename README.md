@@ -18,7 +18,8 @@ Provide actionable context for support/AI prioritized summary, raw data, and dif
 if I am given a server, that I need to check out that has no documentation, I want to know the following:
 
 Which operating system does it use,
-  Which packages are installed and their versions
+
+Which packages are installed and their versions
 	  is there video player or minecraft or vs code installed on the server
 	  I want to flag any important software
 		  vulnerable versions
