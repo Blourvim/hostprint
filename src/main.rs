@@ -1,4 +1,6 @@
+use hostprint::model::host::{myHost, Host};
+
 fn main() {
-    println!("Hello, world!");
+    let my_host:Host = myHost::new();
     
 }

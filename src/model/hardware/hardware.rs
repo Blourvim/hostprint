@@ -33,10 +33,6 @@ pub struct Hardware {
     // Network
     network_interfaces: Option<Vec<NetworkInterface>>,
 
-    // System
-    hostname: Option<String>,
-    kernel_version: Option<String>,
-    os_version: Option<String>,
     uptime_seconds: Option<u64>,
     virtualization: Option<String>,
 
