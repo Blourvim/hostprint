@@ -34,8 +34,6 @@ pub struct Hardware {
     network_interfaces: Option<Vec<NetworkInterface>>,
 
     uptime_seconds: Option<u64>,
-    virtualization: Option<String>,
-
     battery_capacity_percent: Option<f32>,
     battery_status: Option<String>,
 }
