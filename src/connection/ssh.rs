@@ -1,4 +1,4 @@
-use std::{io::Stderr, path::PathBuf, process::Command};
+use std::{path::PathBuf, process::Command};
 
 #[derive(Debug, Clone)]
 pub struct SSHOptions {
@@ -8,7 +8,6 @@ pub struct SSHOptions {
     pub auth: SSHAuth,
     pub command: String,
     pub timeout_secs: Option<u64>,
-    pub strict_host_key_checking: bool,
     pub verbose: bool,
 }
 
@@ -33,7 +32,6 @@ impl SSHOptions {
                 passphrase: None,
             },
             timeout_secs: Some(30),
-            strict_host_key_checking: true,
             verbose: false,
         }
     }
@@ -56,18 +54,32 @@ impl SSHOptions {
         self
     }
 
-    pub fn disable_strict_host_checking(mut self) -> Self {
-        self.strict_host_key_checking = false;
-        self
-    }
+    pub fn build(&self) -> Command {
+        let mut cmd = Command::new("ssh");
 
-    pub fn exec(&self) -> Result<String, String> {
-        let output = Command::new("ls").output().map_err(|e| e.to_string())?;
-
-        if output.status.success() {
-            Ok(String::from_utf8_lossy(&output.stdout).into_owned())
-        } else {
-            Err(String::from_utf8_lossy(&output.stderr).into_owned())
+        if self.verbose {
+            cmd.arg("-v");
         }
+
+        cmd.arg("-p").arg(self.port.to_string());
+        cmd.arg(format!("{}@{}", self.username, self.destination));
+
+        if let Some(timeout) = self.timeout_secs {
+            cmd.arg("-o").arg(format!("ConnectTimeout={}", timeout));
+        }
+
+        match &self.auth {
+            SSHAuth::PrivateKey { path, .. } => {
+                cmd.arg("-i").arg(path);
+            }
+            SSHAuth::Password(_) => {
+                panic!("TODO");
+            }
+        }
+
+        // Remote command
+        cmd.arg(&self.command);
+
+        cmd
     }
 }
