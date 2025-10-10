@@ -1,10 +1,10 @@
-use std::collections::HashSet;
+use crate::model::hardware::hardware::Hardware;
+use std::{collections::HashSet, u64};
 
 enum Os {
     Arch(String),
     Debian(String),
     Other(String),
-    
 }
 
 enum PackageManagers {
@@ -12,13 +12,20 @@ enum PackageManagers {
     Apt(String),
     Pamac(String),
     Flatpak(String),
-    Other(String)
+    Other(String),
+}
+struct Group {
+    pid: Option<u64>,
+    name: Option<u64>,
+}
+struct SystemUser {
+    pid: Option<u64>,
+    groups: Option<HashSet<Group>>,
 }
 
 pub struct Host {
+    current_user: SystemUser,
     os: Option<Os>,
-    memory_total:u64,
-    memory_used:u64,
-    package_managers:HashSet<PackageManagers>,
-
+    hardware: Option<Hardware>,
+    package_managers: HashSet<PackageManagers>,
 }
