@@ -24,19 +24,17 @@ struct SystemUser {
 }
 
 pub struct Host {
-    current_user: SystemUser,
+    // current_user: SystemUser,
     os: Option<Os>,
     hardware: Option<Hardware>,
-    package_managers: HashSet<PackageManagers>,
+    // package_managers: HashSet<PackageManagers>,
 }
 
 impl Default for Host {
     fn default() -> Host {
         Host {
-            current_user: None,
             os: None,
             hardware: None,
-            package_managers: None,
         }
     }
 }

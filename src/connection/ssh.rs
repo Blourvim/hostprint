@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{io::Stderr, path::PathBuf, process::Command};
 
 #[derive(Debug, Clone)]
 pub struct SSHOptions {
@@ -49,12 +49,25 @@ impl SSHOptions {
     }
 
     pub fn with_private_key(mut self, path: impl Into<PathBuf>) -> Self {
-        self.private_key = Some(path.into());
+        self.auth = SSHAuth::PrivateKey {
+            path: path.into(),
+            passphrase: None,
+        };
         self
     }
 
     pub fn disable_strict_host_checking(mut self) -> Self {
         self.strict_host_key_checking = false;
         self
+    }
+
+    pub fn exec(&self) -> Result<String, String> {
+        let output = Command::new("ls").output().map_err(|e| e.to_string())?;
+
+        if output.status.success() {
+            Ok(String::from_utf8_lossy(&output.stdout).into_owned())
+        } else {
+            Err(String::from_utf8_lossy(&output.stderr).into_owned())
+        }
     }
 }
