@@ -8,9 +8,4 @@ pub struct OSInfo {
 }
 
 impl OSInfo {
-    pub fn detect(&self) -> OSInfo {
-        self.detect_from_uname();
     }
-    fn detect_from_uname() -> Option<OSInfo> {
-    }
-}

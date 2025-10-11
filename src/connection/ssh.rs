@@ -1,14 +1,14 @@
 use std::{path::PathBuf, process::Command};
 
 #[derive(Debug, Clone)]
-pub struct SSHOptions {
-    pub destination: String,
-    pub port: u16,
-    pub username: String,
-    pub auth: SSHAuth,
-    pub command: String,
-    pub timeout_secs: Option<u64>,
-    pub verbose: bool,
+pub struct SSHClient {
+    destination: String,
+    port: u16,
+    username: String,
+    auth: SSHAuth,
+    command: String,
+    timeout_secs: Option<u64>,
+    verbose: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -20,11 +20,11 @@ pub enum SSHAuth {
     },
 }
 
-impl SSHOptions {
-    pub fn new(destination: impl Into<String>, command: impl Into<String>) -> Self {
+impl SSHClient {
+    pub fn new(destination: impl Into<String>) -> Self {
         Self {
             destination: destination.into(),
-            command: command.into(),
+            command: "uname -a".into(),
             port: 22,
             username: "root".into(),
             auth: SSHAuth::PrivateKey {
@@ -51,6 +51,11 @@ impl SSHOptions {
             path: path.into(),
             passphrase: None,
         };
+        self
+    }
+
+    pub fn with_command(mut self, command: impl Into<String>) -> Self {
+        self.command = command.into();
         self
     }
 

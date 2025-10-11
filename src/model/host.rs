@@ -40,7 +40,7 @@ impl Default for Host {
 }
 
 impl Host {
-    fn new() -> Host {
+    pub fn new() -> Host {
         Host::default()
     }
 }
