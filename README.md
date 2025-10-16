@@ -57,11 +57,10 @@ Provide actionable context for support/AI prioritized summary, raw data, and dif
 ---
 
 ### Running Services
-- [ ] Identify which services are running  
+- [x] Identify running services
 - [ ] Flag important or sensitive services  
   - [ ] Docker  
   - [ ] Virsh  
-  - [ ] Firewall  
   - [ ] Anything malicious or suspicious  
 
 ---
