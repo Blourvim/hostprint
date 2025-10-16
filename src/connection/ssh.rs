@@ -62,8 +62,6 @@ impl SSHClient {
     }
 }
 
-
-
 pub struct SSHConnection {
     child: Child,
     stdin: ChildStdin,
@@ -77,7 +75,6 @@ impl SSHClient {
         if self.verbose {
             cmd.arg("-v");
         }
-        // cmd.arg("-tt"); 
         cmd.arg("-p").arg(self.port.to_string());
         cmd.arg(format!("{}@{}", self.username, self.destination));
 
@@ -103,7 +100,11 @@ impl SSHClient {
         let stdin = child.stdin.take().unwrap();
         let stdout = BufReader::new(child.stdout.take().unwrap());
 
-        Ok(SSHConnection { child, stdin, stdout })
+        Ok(SSHConnection {
+            child,
+            stdin,
+            stdout,
+        })
     }
 }
 
