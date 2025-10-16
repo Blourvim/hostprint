@@ -1,5 +1,6 @@
 use crate::model::host::Host;
 
+#[derive(Clone)]
 pub struct Unit {
     pub name: String,
     pub comand: String,
