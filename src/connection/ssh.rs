@@ -1,5 +1,8 @@
 use std::{path::PathBuf, process::Command};
 
+use std::io::{BufRead, BufReader, Read, Write};
+use std::process::{Child, ChildStdin, ChildStdout, Stdio};
+
 #[derive(Debug, Clone)]
 pub struct SSHClient {
     destination: String,
@@ -19,7 +22,6 @@ pub enum SSHAuth {
         passphrase: Option<String>,
     },
 }
-
 impl SSHClient {
     pub fn new(destination: impl Into<String>) -> Self {
         Self {
@@ -58,14 +60,24 @@ impl SSHClient {
         self.command = command.into();
         self
     }
+}
 
-    pub fn build(&self) -> Command {
+
+
+pub struct SSHConnection {
+    child: Child,
+    stdin: ChildStdin,
+    stdout: BufReader<ChildStdout>,
+}
+
+impl SSHClient {
+    pub fn open_shell(&self) -> std::io::Result<SSHConnection> {
         let mut cmd = Command::new("ssh");
 
         if self.verbose {
             cmd.arg("-v");
         }
-
+        // cmd.arg("-tt"); 
         cmd.arg("-p").arg(self.port.to_string());
         cmd.arg(format!("{}@{}", self.username, self.destination));
 
@@ -78,13 +90,42 @@ impl SSHClient {
                 cmd.arg("-i").arg(path);
             }
             SSHAuth::Password(_) => {
-                panic!("TODO");
+                panic!("Password auth not implemented");
             }
         }
 
-        // Remote command
-        cmd.arg(&self.command);
+        let mut child = cmd
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::inherit())
+            .spawn()?;
 
-        cmd
+        let stdin = child.stdin.take().unwrap();
+        let stdout = BufReader::new(child.stdout.take().unwrap());
+
+        Ok(SSHConnection { child, stdin, stdout })
+    }
+}
+
+impl SSHConnection {
+    pub fn exec(&mut self, command: &str) -> std::io::Result<String> {
+        const SENTINEL: &str = "__COMMAND_UNIT_DONE__";
+
+        // We echo the sentinel back as a way to determine that a value is returned
+        writeln!(self.stdin, "{}; echo {}", command, SENTINEL)?;
+        self.stdin.flush()?;
+
+        let mut output = String::new();
+
+        for line in self.stdout.by_ref().lines() {
+            let line = line?;
+            if line.trim() == SENTINEL {
+                break;
+            }
+            output.push_str(&line);
+            output.push('\n');
+        }
+
+        Ok(output)
     }
 }
