@@ -1,5 +1,27 @@
 # hostprint
-As a system admin,
+hostprint (alpha) is an SSH-based system probe for quickly mapping out information on a server.
+Currently in very early development expect rough edges, missing features, and experimental outputs.
+
+The goal: Make it simple to snapshot the state of a server ,packages, users, services, and configs, to provide context for AI assistants and generate documentation.
+
+Feel free to open a issue with feature requests.
+
+## Getting Started
+
+## Install
+```bash
+  git clone https://github.com/blourvim/hostprint.git
+  cd hostprint
+  cargo build --release
+
+```
+
+# Example Usage
+```bash
+    ./hostprint --address 10.0.0.5 --port 22 --key ~/.ssh/id_rsa --username debian
+```
+
+
 
 
 ## General Goals
