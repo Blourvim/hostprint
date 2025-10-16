@@ -1,11 +1,5 @@
-use crate::{commands::unit::Unit, model::host::Host};
-
-fn noop_follow_up(stdout: &str, stderr: &str, _host: &mut Host) {
-    println!("Command output:\n{}", stdout);
-    if !stderr.trim().is_empty() {
-        eprintln!("stderr: {}", stderr);
-    }
-}
+use crate::commands::common::noop::noop_follow_up;
+use crate::commands::unit::Unit;
 
 pub fn running_services_units() -> Vec<Unit> {
     vec![
