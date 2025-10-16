@@ -1,4 +1,8 @@
-use hostprint::{commands::basic, connection::ssh::SSHClient, model::host::Host};
+use hostprint::{
+    commands::{basic, package},
+    connection::ssh::SSHClient,
+    model::host::Host,
+};
 
 fn main() -> std::io::Result<()> {
     let mut host = Host::new();
@@ -9,8 +13,9 @@ fn main() -> std::io::Result<()> {
         .with_username("devel");
 
     let mut shell = client.open_shell()?;
-    let units = basic::default_units();
-
+    // let units = basic::default_units();
+    //
+    let units = package::package_units();
     for unit in units.iter() {
         println!("\n=== {} ===", unit.name);
         let stdout = shell.exec(&unit.comand)?;

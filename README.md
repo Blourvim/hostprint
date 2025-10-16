@@ -23,7 +23,7 @@ Provide actionable context for support/AI prioritized summary, raw data, and dif
 ### System Information
 - [x] Which operating system does it use
 
-- [ ] Which packages are installed and their versions  
+- [x] Which packages are installed and their versions  
 - [ ] Check if there are potentially unnecessary packages installed on the server (e.g., video player, Minecraft, or VS Code)  
 - [ ] Flag any important software  
 - [ ] Check vulnerable versions against a CVE list  
@@ -31,8 +31,8 @@ Provide actionable context for support/AI prioritized summary, raw data, and dif
 ---
 
 ### Package Management
-- [ ] Figure out which package managers are installed  
-- [ ] For each package manager found, check installed binaries and their versions  
+- [x] Figure out which package managers are installed  
+- [x] For each package manager found, check installed binaries and their versions  
 
 - [ ] Find out if there are binaries installed by other means (e.g., local builds or custom scripts)  
 
