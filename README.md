@@ -66,14 +66,14 @@ Provide actionable context for support/AI prioritized summary, raw data, and dif
 ---
 
 ### Hardware Information
-- [ ] Collect hardware information, including:  
-  - [ ] Storage  
-  - [ ] RAM  
-  - [ ] GPU  
-  - [ ] CPU  
-  - [ ] Peripherals  
-  - [ ] Motherboard  
-  - [ ] Disk  
+- [x] Collect hardware information, including:  
+  - [x] Storage  
+  - [x] RAM  
+  - [x] GPU  
+  - [x] CPU  
+  - [x] Peripherals  
+  - [x] Motherboard  
+  - [x] Disk  
 
 ---
 
