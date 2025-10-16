@@ -14,59 +14,89 @@ Tell me what’s wrong or suspicious insecure permissions, exposed keys, weird p
 Provide actionable context for support/AI prioritized summary, raw data, and diffable JSON for future comparisons.
 
 
-## General TODO:
-[ ]if I am given a server, that I need to check out that has no documentation, I want to know the following:
+## General TODO
 
-[ ]Which operating system does it use,
+[ ] If I am given a server that has no documentation, I want to know the following:
 
-[ ]Which packages are installed and their versions
-[ ]	  is there video player or minecraft or vs code installed on the server
-[ ]	  I want to flag any important software
-[ ]		  vulnerable versions
+---
 
+### System Information
+[x] Which operating system does it use
 
-[ ]I need to figure out if its got flatpaks, snaps, aur and or  common package managers installed
-[ ]	Per each package manager found, check installed binaries and their versions
+[ ] Which packages are installed and their versions  
+[ ] Check if there are potentially unnecessary packages installed on the server (e.g., video player, Minecraft, or VS Code)  
+[ ] Flag any important software  
+[ ] Check vulnerable versions against a CVE list  
 
-[ ]Find out if there are binaries installed by other means, such as a local build or simple scripts
+---
 
-[ ]I want to gather up any read me file that may be present in some common directories with their locations and date.
+### Package Management
+[ ] Figure out which package managers are installed  
+[ ] For each package manager found, check installed binaries and their versions  
 
-[ ] I want to know which firewall is active,
-[ ]	  then list firewall rules. 
+[ ] Find out if there are binaries installed by other means (e.g., local builds or custom scripts)  
 
-[ ]I want to know the architecture of the server
-[ ]	 Is it bare metal, vm honey pot
+---
 
-[ ] I want to know which services are running,
-[ ]	I want to flag important services
-[ ]		Docker
-[ ]		 virsh
-[ ]		 firewall
-[ ]		 anything malicious
+### Documentation
+[ ] Gather any README files that may be present in common directories  
+[ ] Record their locations and modification dates  
 
+---
 
-[ ] I want to know hardware info,
-[ ]	  storage
-[ ]	  ram
-[ ]	  gpu
-[ ]	  cpu
-[ ]	  any peripherals
-[ ]	  motheboard
-[ ]	  disk
+### Firewall & Security
+[ ] Identify which firewall is active  
+[ ] List all firewall rules  
 
-[ ]I want to know the network configurations
-[ ]	Which ports are exposed
-[ ]	 what are the firewall rules
-[ ]	 what type of networking is there
-[ ]	 is it behind a reverse proxy, or proxy
-[ ]	 what are current settings
-[ ]	 any vpns that are installed
-[ ]		 wireguard
-		 
-[ ]I want to know the logs if they are not too big
+---
 
-[ ]I want to audit for any bad files or files of interest
-[ ]	bad permissions eg 777
-[ ]	 password.txt
-[ ]	 private keys
+### System Architecture
+[ ] Determine the architecture of the server  
+[ ] Check if it is bare metal, virtual machine, or a honeypot  
+
+---
+
+### Running Services
+[ ] Identify which services are running  
+[ ] Flag important or sensitive services  
+  - [ ] Docker  
+  - [ ] Virsh  
+  - [ ] Firewall  
+  - [ ] Anything malicious or suspicious  
+
+---
+
+### Hardware Information
+[ ] Collect hardware information, including:  
+  - [ ] Storage  
+  - [ ] RAM  
+  - [ ] GPU  
+  - [ ] CPU  
+  - [ ] Peripherals  
+  - [ ] Motherboard  
+  - [ ] Disk  
+
+---
+
+### Network Configuration
+[ ] Identify network configurations:  
+  - [ ] Which ports are exposed  
+  - [ ] Firewall rules  
+  - [ ] Type of networking (bridged, NAT, etc.)  
+  - [ ] Whether it is behind a reverse proxy or proxy  
+  - [ ] Current network settings  
+  - [ ] Installed VPNs  
+    - [ ] WireGuard  
+
+---
+
+### Logs
+[ ] Review system and application logs (if not too large)  
+
+---
+
+### File System Audit
+[ ] Audit for bad files or files of interest  
+  - [ ] World-writable or misconfigured permissions (e.g., 777)  
+  - [ ] `password.txt` or similar sensitive files  
+  - [ ] Private keys or credentials  
