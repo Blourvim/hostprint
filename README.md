@@ -45,7 +45,7 @@ Provide actionable context for support/AI prioritized summary, raw data, and dif
 ---
 
 ### Firewall & Security
-- [ ] Identify which firewall is active  
+- [x] Identify which firewall is active  
 - [ ] List all firewall rules  
 
 ---

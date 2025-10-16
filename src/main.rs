@@ -1,5 +1,5 @@
 use hostprint::{
-    commands::{basic, package},
+    commands::{basic, firewall, package},
     connection::ssh::SSHClient,
     model::host::Host,
 };
@@ -14,8 +14,8 @@ fn main() -> std::io::Result<()> {
 
     let mut shell = client.open_shell()?;
     // let units = basic::default_units();
-    //
-    let units = package::package_units();
+    // let units = package::package_units();
+     let units = firewall::firewall_units();
     for unit in units.iter() {
         println!("\n=== {} ===", unit.name);
         let stdout = shell.exec(&unit.comand)?;
