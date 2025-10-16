@@ -2,7 +2,7 @@
 hostprint (alpha) is an SSH-based system probe for quickly mapping out information on a server.
 Currently in very early development expect rough edges, missing features, and experimental outputs.
 
-The goal: Make it simple to snapshot the state of a server ,packages, users, services, and configs, to provide context for AI assistants and generate documentation.
+The goal: Make it simple to snapshot the state of a server, packages, users, services, and configs, to provide context for AI assistants and generate documentation.
 
 Feel free to open a issue with feature requests.
 
