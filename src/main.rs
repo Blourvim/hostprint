@@ -41,7 +41,7 @@ fn main() -> std::io::Result<()> {
 
     for unit in units.iter() {
         println!("\n=== {} ===", unit.name);
-        let stdout = shell.exec(&unit.comand)?;
+        let stdout = shell.exec(&unit.command)?;
         (unit.follow_up)(&stdout, "", &mut host);
     }
     Ok(())

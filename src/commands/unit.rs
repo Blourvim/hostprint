@@ -3,7 +3,7 @@ use crate::model::host::Host;
 #[derive(Clone)]
 pub struct Unit {
     pub name: String,
-    pub comand: String,
+    pub command: String,
     pub follow_up: fn(stdout: &str, stderr: &str, &mut Host),
 }
 
@@ -15,7 +15,7 @@ impl Unit {
     ) -> Self {
         Self {
             name: name.to_string(),
-            comand: comand.to_string(),
+            command: comand.to_string(),
             follow_up,
         }
     }
