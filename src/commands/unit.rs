@@ -5,6 +5,7 @@ pub struct Unit {
     pub name: String,
     pub command: String,
     pub follow_up: fn(stdout: &str, stderr: &str, &mut Host),
+
 }
 
 impl Unit {
