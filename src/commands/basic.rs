@@ -1,11 +1,26 @@
-use crate::{commands::{common::noop::noop_follow_up, unit::Unit}, model::host::Host};
-
-
+use crate::{
+    commands::{common::noop::noop_follow_up, unit::Unit},
+    model::host::Host,
+};
 
 pub fn default_units() -> Vec<Unit> {
     vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
-        Unit::new("System Info", "uname -snrvmpio", noop_follow_up),
+        // Execute each `uname` option individually rather than as a single concatenated command.
+        // This ensures reliable parsing and isolates fields, avoiding issues if a delimiter (\x1f)
+        // appears in the output. Any unusual cases can be handled via PRs.
+        Unit::new(
+            "System Info",
+            r"uname -s && echo -n $'\x1f' &&
+              uname -n && echo -n $'\x1f' &&
+              uname -r && echo -n $'\x1f' &&
+              uname -v && echo -n $'\x1f' &&
+              uname -m && echo -n $'\x1f' &&
+              uname -p && echo -n $'\x1f' &&
+              uname -i && echo -n $'\x1f' &&
+              uname -o",
+            noop_follow_up,
+        ),
         Unit::new("OS Release", "cat /etc/os-release", noop_follow_up),
         Unit::new("Current User", "whoami", noop_follow_up),
         Unit::new("User Info", "id", noop_follow_up),
