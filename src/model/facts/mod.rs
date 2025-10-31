@@ -1,3 +1,2 @@
-
-mod uname_facts;
+pub mod uname_facts;
 

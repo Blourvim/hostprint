@@ -1,14 +1,17 @@
 use crate::{
     commands::{common::noop::noop_follow_up, unit::Unit},
+    model::facts::uname_facts::UnameFacts,
     model::host::Host,
 };
 
+pub fn hostname_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
+    let facts = UnameFacts::new(stdout.into());
+    println!("{:?}", facts)
+}
 pub fn default_units() -> Vec<Unit> {
-    vec![
+    return vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
-        // Execute each `uname` option individually rather than as a single concatenated command.
-        // This ensures reliable parsing and isolates fields, avoiding issues if a delimiter (\x1f)
-        // appears in the output. Any unusual cases can be handled via PRs.
+        // This ensures reliable parsing
         Unit::new(
             "System Info",
             r"uname -s && echo -n $'\x1f' &&
@@ -19,8 +22,9 @@ pub fn default_units() -> Vec<Unit> {
               uname -p && echo -n $'\x1f' &&
               uname -i && echo -n $'\x1f' &&
               uname -o",
-            noop_follow_up,
+            hostname_follow_up
         ),
+
         Unit::new("OS Release", "cat /etc/os-release", noop_follow_up),
         Unit::new("Current User", "whoami", noop_follow_up),
         Unit::new("User Info", "id", noop_follow_up),
@@ -61,5 +65,5 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Packages", "dpkg -l | head -20", noop_follow_up),
         // Unit::new("Cron Jobs", "sudo crontab -l", noop_follow_up),
         Unit::new("Cron Directory", "ls -lah /etc/cron*", noop_follow_up),
-    ]
+    ];
 }

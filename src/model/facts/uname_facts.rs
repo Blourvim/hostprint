@@ -24,3 +24,20 @@ pub struct UnameFacts {
     /// -o, --operating-system
     pub operating_system: Option<String>,
 }
+
+impl UnameFacts {
+    /// Create a new `UnameFacts` from a single string containing all fields separated by `\x1f`.
+    pub fn new(output: String) -> Self {
+        let fields: Vec<&str> = output.split('\x1f').collect();
+        Self {
+            kernel_name: fields.get(0).map(|s| s.to_string()),
+            nodename: fields.get(1).map(|s| s.to_string()),
+            kernel_release: fields.get(2).map(|s| s.to_string()),
+            kernel_version: fields.get(3).map(|s| s.to_string()),
+            machine: fields.get(4).map(|s| s.to_string()),
+            processor: fields.get(5).map(|s| s.to_string()),
+            hardware_platform: fields.get(6).map(|s| s.to_string()),
+            operating_system: fields.get(7).map(|s| s.to_string()),
+        }
+    }
+}
