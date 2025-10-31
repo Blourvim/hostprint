@@ -1,2 +1,3 @@
-pub mod uname_facts;
+pub mod uname;
+pub mod os_release;
 

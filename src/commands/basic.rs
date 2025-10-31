@@ -1,11 +1,21 @@
 use crate::{
     commands::{common::noop::noop_follow_up, unit::Unit},
-    model::facts::uname_facts::UnameFacts,
-    model::host::Host,
+    model::{
+        facts::{
+            os_release::{self, OsReleaseFacts},
+            uname::UnameFacts,
+        },
+        host::Host,
+    },
 };
 
-pub fn hostname_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
+pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
     let facts = UnameFacts::new(stdout.into());
+    println!("{:?}", facts)
+}
+
+pub fn os_release_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
+    let facts = OsReleaseFacts::new(stdout.into());
     println!("{:?}", facts)
 }
 pub fn default_units() -> Vec<Unit> {
@@ -22,10 +32,9 @@ pub fn default_units() -> Vec<Unit> {
               uname -p && echo -n $'\x1f' &&
               uname -i && echo -n $'\x1f' &&
               uname -o",
-            hostname_follow_up
+            uname_follow_up,
         ),
-
-        Unit::new("OS Release", "cat /etc/os-release", noop_follow_up),
+        Unit::new("OS Release", "cat /etc/os-release", os_release_follow_up),
         Unit::new("Current User", "whoami", noop_follow_up),
         Unit::new("User Info", "id", noop_follow_up),
         Unit::new("Groups", "groups", noop_follow_up),
