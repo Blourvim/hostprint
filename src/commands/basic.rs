@@ -1,9 +1,11 @@
-use crate::commands::{common::noop::noop_follow_up, unit::Unit};
+use crate::{commands::{common::noop::noop_follow_up, unit::Unit}, model::host::Host};
+
+
 
 pub fn default_units() -> Vec<Unit> {
     vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
-        Unit::new("System Info", "uname -a", noop_follow_up),
+        Unit::new("System Info", "uname -snrvmpio", noop_follow_up),
         Unit::new("OS Release", "cat /etc/os-release", noop_follow_up),
         Unit::new("Current User", "whoami", noop_follow_up),
         Unit::new("User Info", "id", noop_follow_up),
