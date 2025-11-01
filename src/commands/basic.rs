@@ -3,6 +3,7 @@ use crate::{
     model::{
         facts::{
             os_release::{self, OsReleaseFacts},
+            passwd::GetentPasswdFacts,
             uname::UnameFacts,
         },
         host::Host,
@@ -16,6 +17,11 @@ pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
 
 pub fn os_release_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
     let facts = OsReleaseFacts::new(stdout.into());
+    println!("{:?}", facts)
+}
+
+pub fn getent_passwd_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
+    let facts = GetentPasswdFacts::from_getent(stdout.into());
     println!("{:?}", facts)
 }
 pub fn default_units() -> Vec<Unit> {
@@ -35,6 +41,7 @@ pub fn default_units() -> Vec<Unit> {
             uname_follow_up,
         ),
         Unit::new("OS Release", "cat /etc/os-release", os_release_follow_up),
+        Unit::new("Users", "getent passwd", getent_passwd_follow_up),
         Unit::new("Current User", "whoami", noop_follow_up),
         Unit::new("User Info", "id", noop_follow_up),
         Unit::new("Groups", "groups", noop_follow_up),
