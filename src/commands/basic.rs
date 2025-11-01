@@ -27,7 +27,8 @@ pub fn getent_passwd_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> (
 pub fn default_units() -> Vec<Unit> {
     return vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
-        // This ensures reliable parsing
+        // This ensures reliable parsing, uname -snrvmpio returns unreliable spacing
+        //https://www.man7.org/linux/man-pages/man1/uname.1.html
         Unit::new(
             "System Info",
             r"uname -s && echo -n $'\x1f' &&
@@ -42,10 +43,8 @@ pub fn default_units() -> Vec<Unit> {
         ),
         Unit::new("OS Release", "cat /etc/os-release", os_release_follow_up),
         Unit::new("Users", "getent passwd", getent_passwd_follow_up),
-        Unit::new("Current User", "whoami", noop_follow_up),
         Unit::new("User Info", "id", noop_follow_up),
         Unit::new("Groups", "groups", noop_follow_up),
-        // Unit::new("Sudo Capabilities", "sudo -l", noop_follow_up),
         Unit::new("Uptime", "uptime", noop_follow_up),
         Unit::new("Logged-in Users", "w", noop_follow_up),
         Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
@@ -72,14 +71,18 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Web Roots", "ls -lah /var/www", noop_follow_up),
         Unit::new("Opt Folders", "ls -lah /opt", noop_follow_up),
         Unit::new("Logs", "ls -lah /var/log", noop_follow_up),
-        // Unit::new("Recent Syslog", "sudo tail -n 20 /var/log/syslog 2>/dev/null || sudo tail -n 20 /var/log/messages", noop_follow_up),
         Unit::new(
             "Package Manager",
             "which apt || which yum || which dnf || which pacman",
             noop_follow_up,
         ),
         Unit::new("Packages", "dpkg -l | head -20", noop_follow_up),
-        // Unit::new("Cron Jobs", "sudo crontab -l", noop_follow_up),
         Unit::new("Cron Directory", "ls -lah /etc/cron*", noop_follow_up),
+        // TODO operations which require elevated permissions are out of scope for now
+        // Unit::new("Cron Jobs", "sudo crontab -l", noop_follow_up),
+        // Unit::new("Recent Syslog", "sudo tail -n 20 /var/log/syslog 2>/dev/null || sudo tail -n 20 /var/log/messages", noop_follow_up),
+
+        // already have the id comand for the basic functionality
+        //    Unit::new("Current User", "whoami", noop_follow_up),
     ];
 }
