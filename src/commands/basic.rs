@@ -7,6 +7,7 @@ use crate::{
             passwd::GetentPasswdFacts,
             uname::UnameFacts,
             uptime::UptimeFacts,
+            w::WFacts,
         },
         host::Host,
     },
@@ -36,6 +37,11 @@ pub fn uptime_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
     let facts = UptimeFacts::from_std(stdout.into());
     println!("{:?}", facts)
 }
+
+pub fn w_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
+    let facts = WFacts::from_std(stdout.into());
+    println!("{:?}", facts)
+}
 pub fn default_units() -> Vec<Unit> {
     return vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
@@ -58,7 +64,9 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("User Info", "id", id_followup),
         // TODO uptime for containers out of scope for now
         Unit::new("Uptime", "uptime", uptime_followup),
-        Unit::new("Logged-in Users", "w", noop_follow_up),
+        // TODO w for containers out of scope for now
+        Unit::new("Logged-in Users", "w -h ", w_followup),
+
         Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
         Unit::new("Disk Usage", "df -h", noop_follow_up),
         Unit::new(
