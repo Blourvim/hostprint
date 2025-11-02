@@ -6,6 +6,7 @@ use crate::{
             os_release::{self, OsReleaseFacts},
             passwd::GetentPasswdFacts,
             uname::UnameFacts,
+            uptime::UptimeFacts,
         },
         host::Host,
     },
@@ -30,6 +31,11 @@ pub fn id_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
     let facts = IdFacts::from_std(stdout.into());
     println!("{:?}", facts)
 }
+
+pub fn uptime_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
+    let facts = UptimeFacts::from_std(stdout.into());
+    println!("{:?}", facts)
+}
 pub fn default_units() -> Vec<Unit> {
     return vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
@@ -50,7 +56,7 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("OS Release", "cat /etc/os-release", os_release_follow_up),
         Unit::new("Users", "getent passwd", getent_passwd_follow_up),
         Unit::new("User Info", "id", id_followup),
-        Unit::new("Uptime", "uptime", noop_follow_up),
+        Unit::new("Uptime", "uptime", uptime_followup),
         Unit::new("Logged-in Users", "w", noop_follow_up),
         Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
         Unit::new("Disk Usage", "df -h", noop_follow_up),
