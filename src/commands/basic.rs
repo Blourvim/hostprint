@@ -75,6 +75,7 @@ pub fn default_units() -> Vec<Unit> {
             noop_follow_up,
         ),
         Unit::new("Memory", "free -h", noop_follow_up),
+        // TODO ip has json output, do this when implementing serde
         Unit::new("Network Interfaces", "ip addr", noop_follow_up),
         Unit::new("Open Ports", "ss -tuln", noop_follow_up),
         Unit::new(
