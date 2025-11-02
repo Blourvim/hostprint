@@ -2,6 +2,7 @@ use crate::{
     commands::{common::noop::noop_follow_up, unit::Unit},
     model::{
         facts::{
+            id::{self, IdFacts},
             os_release::{self, OsReleaseFacts},
             passwd::GetentPasswdFacts,
             uname::UnameFacts,
@@ -24,6 +25,11 @@ pub fn getent_passwd_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> (
     let facts = GetentPasswdFacts::from_getent(stdout.into());
     println!("{:?}", facts)
 }
+
+pub fn id_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
+    let facts = IdFacts::from_std(stdout.into());
+    println!("{:?}", facts)
+}
 pub fn default_units() -> Vec<Unit> {
     return vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
@@ -43,8 +49,7 @@ pub fn default_units() -> Vec<Unit> {
         ),
         Unit::new("OS Release", "cat /etc/os-release", os_release_follow_up),
         Unit::new("Users", "getent passwd", getent_passwd_follow_up),
-        Unit::new("User Info", "id", noop_follow_up),
-        Unit::new("Groups", "groups", noop_follow_up),
+        Unit::new("User Info", "id", id_followup),
         Unit::new("Uptime", "uptime", noop_follow_up),
         Unit::new("Logged-in Users", "w", noop_follow_up),
         Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
@@ -82,7 +87,8 @@ pub fn default_units() -> Vec<Unit> {
         // Unit::new("Cron Jobs", "sudo crontab -l", noop_follow_up),
         // Unit::new("Recent Syslog", "sudo tail -n 20 /var/log/syslog 2>/dev/null || sudo tail -n 20 /var/log/messages", noop_follow_up),
 
-        // already have the id comand for the basic functionality
+        // already implemented another comand for it unnecesary for now
         //    Unit::new("Current User", "whoami", noop_follow_up),
+        //Unit::new("Groups", "groups", noop_follow_up),
     ];
 }
