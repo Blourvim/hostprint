@@ -2,6 +2,7 @@ use crate::{
     commands::{common::noop::noop_follow_up, unit::Unit},
     model::{
         facts::{
+            df::DfFacts,
             id::{self, IdFacts},
             os_release::{self, OsReleaseFacts},
             passwd::GetentPasswdFacts,
@@ -42,6 +43,11 @@ pub fn w_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
     let facts = WFacts::from_std(stdout.into());
     println!("{:?}", facts)
 }
+
+pub fn df_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
+    let facts = DfFacts::from_std(stdout.into());
+    println!("{:?}", facts)
+}
 pub fn default_units() -> Vec<Unit> {
     return vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
@@ -66,9 +72,8 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Uptime", "uptime", uptime_followup),
         // TODO w for containers out of scope for now
         Unit::new("Logged-in Users", "w -h ", w_followup),
-
         Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
-        Unit::new("Disk Usage", "df -h", noop_follow_up),
+        Unit::new("Disk Usage", "df", df_followup),
         Unit::new(
             "Largest Directories",
             "du -sh /* 2>/dev/null | sort -h | tail",
