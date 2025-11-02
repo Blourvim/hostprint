@@ -56,6 +56,7 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("OS Release", "cat /etc/os-release", os_release_follow_up),
         Unit::new("Users", "getent passwd", getent_passwd_follow_up),
         Unit::new("User Info", "id", id_followup),
+        // TODO uptime for containers out of scope for now
         Unit::new("Uptime", "uptime", uptime_followup),
         Unit::new("Logged-in Users", "w", noop_follow_up),
         Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
