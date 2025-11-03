@@ -1,53 +1,12 @@
-use crate::{
-    commands::{common::noop::noop_follow_up, unit::Unit},
-    model::{
-        facts::{
-            df::DfFacts,
-            id::{self, IdFacts},
-            os_release::{self, OsReleaseFacts},
-            passwd::GetentPasswdFacts,
-            uname::UnameFacts,
-            uptime::UptimeFacts,
-            w::WFacts,
-        },
-        host::Host,
+use crate::commands::{
+    common::noop::noop_follow_up,
+    follow_up::basic::{
+        df_followup, getent_passwd_follow_up, id_followup, os_release_follow_up, uname_follow_up,
+        uptime_followup, w_followup,
     },
+    unit::Unit,
 };
 
-pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = UnameFacts::new(stdout.into());
-    println!("{:?}", facts)
-}
-
-pub fn os_release_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = OsReleaseFacts::new(stdout.into());
-    println!("{:?}", facts)
-}
-
-pub fn getent_passwd_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = GetentPasswdFacts::from_getent(stdout.into());
-    println!("{:?}", facts)
-}
-
-pub fn id_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = IdFacts::from_std(stdout.into());
-    println!("{:?}", facts)
-}
-
-pub fn uptime_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = UptimeFacts::from_std(stdout.into());
-    println!("{:?}", facts)
-}
-
-pub fn w_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = WFacts::from_std(stdout.into());
-    println!("{:?}", facts)
-}
-
-pub fn df_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = DfFacts::from_std(stdout.into());
-    println!("{:?}", facts)
-}
 pub fn default_units() -> Vec<Unit> {
     return vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
@@ -72,14 +31,12 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Uptime", "uptime", uptime_followup),
         // TODO w for containers out of scope for now
         Unit::new("Logged-in Users", "w -h ", w_followup),
-        Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
         Unit::new("Disk Usage", "df", df_followup),
         Unit::new(
             "Largest Directories",
             "du -sh /* 2>/dev/null | sort -h | tail",
             noop_follow_up,
         ),
-        Unit::new("Memory", "free -h", noop_follow_up),
         // TODO ip has json output, do this when implementing serde
         Unit::new("Network Interfaces", "ip addr", noop_follow_up),
         Unit::new("Open Ports", "ss -tuln", noop_follow_up),
@@ -93,17 +50,20 @@ pub fn default_units() -> Vec<Unit> {
             "ps aux --sort=-%mem | head -15",
             noop_follow_up,
         ),
-        Unit::new("Home Directories", "ls -lah /home", noop_follow_up),
-        Unit::new("Web Roots", "ls -lah /var/www", noop_follow_up),
-        Unit::new("Opt Folders", "ls -lah /opt", noop_follow_up),
-        Unit::new("Logs", "ls -lah /var/log", noop_follow_up),
-        Unit::new(
-            "Package Manager",
-            "which apt || which yum || which dnf || which pacman",
-            noop_follow_up,
-        ),
-        Unit::new("Packages", "dpkg -l | head -20", noop_follow_up),
-        Unit::new("Cron Directory", "ls -lah /etc/cron*", noop_follow_up),
+        // out of scope
+        //Unit::new("Memory", "free -h", noop_follow_up),
+        //Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
+        //Unit::new("Home Directories", "ls -lah /home", noop_follow_up),
+        //Unit::new("Web Roots", "ls -lah /var/www", noop_follow_up),
+        //Unit::new("Opt Folders", "ls -lah /opt", noop_follow_up),
+        //Unit::new("Logs", "ls -lah /var/log", noop_follow_up),
+        //Unit::new(
+        //    "Package Manager",
+        //    "which apt || which yum || which dnf || which pacman",
+        //    noop_follow_up,
+        //),
+        //Unit::new("Packages", "dpkg -l | head -20", noop_follow_up),
+        //Unit::new("Cron Directory", "ls -lah /etc/cron*", noop_follow_up),
         // TODO operations which require elevated permissions are out of scope for now
         // Unit::new("Cron Jobs", "sudo crontab -l", noop_follow_up),
         // Unit::new("Recent Syslog", "sudo tail -n 20 /var/log/syslog 2>/dev/null || sudo tail -n 20 /var/log/messages", noop_follow_up),
