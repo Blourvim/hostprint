@@ -1,8 +1,8 @@
 use crate::commands::{
     common::noop::noop_follow_up,
     follow_up::basic::{
-        df_followup, getent_passwd_follow_up, id_followup, os_release_follow_up, uname_follow_up,
-        uptime_followup, w_followup,
+        df_followup, du_followup, getent_passwd_follow_up, id_followup, os_release_follow_up,
+        uname_follow_up, uptime_followup, w_followup,
     },
     unit::Unit,
 };
@@ -34,23 +34,23 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Disk Usage", "df", df_followup),
         Unit::new(
             "Largest Directories",
-            "du -sh /* 2>/dev/null | sort -h | tail",
-            noop_follow_up,
+            "du -sh --time /* 2>/dev/null",
+            du_followup,
         ),
-        // TODO ip has json output, do this when implementing serde
-        Unit::new("Network Interfaces", "ip addr", noop_follow_up),
         Unit::new("Open Ports", "ss -tuln", noop_follow_up),
         Unit::new(
             "Running Services",
             "systemctl list-units --type=service --state=running | head -30",
             noop_follow_up,
         ),
-        Unit::new(
-            "Top Memory Processes",
-            "ps aux --sort=-%mem | head -15",
-            noop_follow_up,
-        ),
+        // TODO ip has json output, do this when implementing serde
+        Unit::new("Network Interfaces", "ip addr", noop_follow_up),
         // out of scope
+        // Unit::new(
+        //     "Top Memory Processes",
+        //     "ps aux --sort=-%mem | head -15",
+        //     noop_follow_up,
+        // ),
         //Unit::new("Memory", "free -h", noop_follow_up),
         //Unit::new("Top Processes", "top -n 1 | head -20", noop_follow_up),
         //Unit::new("Home Directories", "ls -lah /home", noop_follow_up),

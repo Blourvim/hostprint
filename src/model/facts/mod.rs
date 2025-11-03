@@ -5,3 +5,4 @@ pub(crate) mod id;
 pub mod uptime;
 pub mod w;
 pub mod df;
+pub mod du;
