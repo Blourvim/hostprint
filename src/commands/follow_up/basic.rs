@@ -1,6 +1,7 @@
 use crate::model::{
     facts::{
-        df::DfFacts, du::DuFacts, id::IdFacts, os_release::OsReleaseFacts, passwd::GetentPasswdFacts, uname::UnameFacts, uptime::UptimeFacts, w::WFacts
+        df::DfFacts, du::DuFacts, id::IdFacts, os_release::OsReleaseFacts,
+        passwd::GetentPasswdFacts, ss::SsFacts, uname::UnameFacts, uptime::UptimeFacts, w::WFacts,
     },
     host::Host,
 };
@@ -40,8 +41,12 @@ pub fn df_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
     println!("{:?}", facts)
 }
 
-
 pub fn du_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
     let facts = DuFacts::from_std(stdout.into());
+    println!("{:?}", facts)
+}
+
+pub fn ss_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
+    let facts = SsFacts::from_std(stdout.into());
     println!("{:?}", facts)
 }

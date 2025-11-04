@@ -6,3 +6,4 @@ pub mod uptime;
 pub mod w;
 pub mod df;
 pub mod du;
+pub mod ss;

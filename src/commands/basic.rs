@@ -2,7 +2,7 @@ use crate::commands::{
     common::noop::noop_follow_up,
     follow_up::basic::{
         df_followup, du_followup, getent_passwd_follow_up, id_followup, os_release_follow_up,
-        uname_follow_up, uptime_followup, w_followup,
+        ss_followup, uname_follow_up, uptime_followup, w_followup,
     },
     unit::Unit,
 };
@@ -37,7 +37,7 @@ pub fn default_units() -> Vec<Unit> {
             "du -sh --time /* 2>/dev/null",
             du_followup,
         ),
-        Unit::new("Open Ports", "ss -tulnp", noop_follow_up),
+        Unit::new("Open Ports", "ss -HtulnpO", ss_followup),
         Unit::new(
             "Running Services",
             "systemctl list-units --type=service --state=running | head -30",
