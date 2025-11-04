@@ -37,7 +37,7 @@ pub fn default_units() -> Vec<Unit> {
             "du -sh --time /* 2>/dev/null",
             du_followup,
         ),
-        Unit::new("Open Ports", "ss -tuln", noop_follow_up),
+        Unit::new("Open Ports", "ss -tulnp", noop_follow_up),
         Unit::new(
             "Running Services",
             "systemctl list-units --type=service --state=running | head -30",
