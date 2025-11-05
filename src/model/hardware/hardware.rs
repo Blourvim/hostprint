@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
 pub struct Hardware {
     // CPU
     cpu_architecture: Option<String>,
@@ -38,7 +38,7 @@ pub struct Hardware {
     battery_status: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
 struct DiskInfo {
     name: String,
     model: Option<String>,
@@ -46,7 +46,7 @@ struct DiskInfo {
     rotational: Option<bool>, // SSD = false, HDD = true
 }
 
-#[derive(Debug)]
+#[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
 struct PartitionInfo {
     name: String,
     mount_point: Option<String>,
@@ -55,7 +55,7 @@ struct PartitionInfo {
     used_bytes: Option<u64>,
 }
 
-#[derive(Debug)]
+#[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
 struct GpuInfo {
     name: Option<String>,
     vendor: Option<String>,
@@ -63,7 +63,7 @@ struct GpuInfo {
     driver: Option<String>,
 }
 
-#[derive(Debug)]
+#[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
 struct NetworkInterface {
     name: String,
     mac_address: Option<String>,

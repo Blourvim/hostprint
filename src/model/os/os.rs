@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
 pub struct OSInfo {
     pub name: String,
     pub version: String,
