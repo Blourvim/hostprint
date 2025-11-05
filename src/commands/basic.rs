@@ -31,21 +31,22 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Uptime", "uptime", uptime_followup),
         // TODO w for containers out of scope for now
         Unit::new("Logged-in Users", "w -h ", w_followup),
-        Unit::new("Disk Usage", "df", df_followup),
-        Unit::new(
-            "Largest Directories",
-            "du -sh --time /* 2>/dev/null",
-            du_followup,
-        ),
+        // TODO uncomment later
+        // Unit::new("Disk Usage", "df", df_followup),
+        // Unit::new(
+        //     "Largest Directories",
+        //     "du -sh --time /* 2>/dev/null",
+        //     du_followup,
+        // ),
         Unit::new("Open Ports", "ss -HtulnpO", ss_followup),
-        Unit::new(
-            "Running Services",
-            "systemctl list-units --type=service --state=running | head -30",
-            noop_follow_up,
-        ),
         // TODO ip has json output, do this when implementing serde
         Unit::new("Network Interfaces", "ip addr", noop_follow_up),
         // out of scope
+        // Unit::new(
+        //     "Running Services",
+        //     "systemctl list-units --type=service --state=running",
+        //     noop_follow_up,
+        // ),
         // Unit::new(
         //     "Top Memory Processes",
         //     "ps aux --sort=-%mem | head -15",
