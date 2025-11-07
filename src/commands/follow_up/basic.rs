@@ -79,7 +79,7 @@ pub fn uptime_followup(stdout: &str, _stderr: &str, host: &mut Host) {
     if let Some(facts) = UptimeFacts::from_std(stdout) {
         let metrics = Metrics {
             uptime_seconds: Some(facts.uptime_seconds),
-            current_time_seconds: Some(facts.current_time_seconds),
+            system_time_seconds: Some(facts.current_time_seconds),
             users_logged_in: Some(facts.users_logged_in),
             load_average: Some(facts.load_average),
         };

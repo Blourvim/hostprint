@@ -2,7 +2,10 @@ use crate::model::{
     hardware::hardware::Hardware,
     metrics::metrics::Metrics,
     os::os::OSInfo,
-    security::acesss_control::{SystemGroup, SystemUser},
+    security::{
+        acesss_control::{SystemGroup, SystemUser},
+        session::ActiveSession,
+    },
 };
 use std::{collections::HashSet, u64};
 
@@ -31,6 +34,7 @@ pub struct Host {
     pub groups: Option<Vec<SystemGroup>>,
     pub package_managers: HashSet<PackageManager>,
     pub metrics: Option<Metrics>,
+    pub sessions: Option<Vec<ActiveSession>>,
 }
 
 impl Default for Host {
@@ -43,6 +47,7 @@ impl Default for Host {
             os: None,
             hardware: None,
             metrics: None,
+            sessions: None,
         }
     }
 }
