@@ -1,4 +1,4 @@
-use crate::model::hardware::hardware::Hardware;
+use crate::model::{hardware::hardware::Hardware, os::os::OSInfo};
 use std::{collections::HashSet, default, u64};
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
@@ -30,7 +30,7 @@ pub struct SystemUser {
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct Host {
     // current_user: SystemUser,
-    pub os: Option<Os>,
+    pub os: Option<OSInfo>,
     pub hardware: Option<Hardware>,
     // package_managers: HashSet<PackageManagers>,
 }

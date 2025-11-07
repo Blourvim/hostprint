@@ -1,11 +1,8 @@
 #[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
 pub struct OSInfo {
-    pub name: String,
-    pub version: String,
-    pub family: String,
-    pub kernel: String,
-    pub arch: String,
+    pub name: Option<String>,
+    pub version: Option<String>,
+    pub family: Option<String>,
+    pub kernel: Option<String>,
+    pub arch: Option<String>,
 }
-
-impl OSInfo {
-    }
