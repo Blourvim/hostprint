@@ -4,29 +4,22 @@ use crate::model::{
         passwd::GetentPasswdFacts, ss::SsFacts, uname::UnameFacts, uptime::UptimeFacts, w::WFacts,
     },
     host::Host,
-    os::os::OSInfo,
+    os::os::OSInfo, security::acesss_control::SystemUser,
 };
 
 pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) {
     let facts = UnameFacts::new(stdout.into());
 
     host.os = Some(OSInfo {
-        // hostname or kernel name
         name: facts.nodename.clone().or(facts.kernel_name.clone()),
-
-        // kernel release or version
         version: facts
             .kernel_release
             .clone()
             .or(facts.kernel_version.clone()),
 
-        // OS family (GNU/Linux, Darwin, etc.)
         family: facts.operating_system.clone(),
-
-        // kernel name
         kernel: facts.kernel_name.clone(),
 
-        // architecture or machine info
         arch: facts
             .machine
             .clone()
@@ -37,9 +30,43 @@ pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) {
 pub fn os_release_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
     let facts = OsReleaseFacts::new(stdout.into());
 }
+pub fn getent_passwd_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
+    let facts = GetentPasswdFacts::from_getent(stdout);
 
-pub fn getent_passwd_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = GetentPasswdFacts::from_getent(stdout.into());
+    // Map User → SystemUser
+    let system_users: Vec<SystemUser> = facts
+        .users
+        .iter()
+        .map(|u| {
+            SystemUser {
+                uid: Some(u.uid),
+                gid: Some(u.guid),
+                name: Some(u.name.clone()),
+                home: Some(u.home.clone()),
+                groups: None, // we'll fill later if we parse /etc/group
+            }
+        })
+        .collect();
+
+    // Merge with existing host.users if it exists
+    if let Some(existing_users) = &mut host.users {
+        existing_users.extend(system_users);
+    } else {
+        host.users = Some(system_users);
+    }
+
+    // Optionally, we could guess "current user" by UID == 0 or matching `whoami`
+    if host.current_user.is_none() {
+        // crude heuristic: root or first user
+        let maybe_current = host
+            .users
+            .as_ref()
+            .and_then(|u| u.iter().find(|usr| usr.uid == Some(0)))
+            .cloned()
+            .or_else(|| host.users.as_ref().and_then(|u| u.first().cloned()));
+
+        host.current_user = maybe_current;
+    }
 }
 
 pub fn id_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {

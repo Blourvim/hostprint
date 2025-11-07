@@ -1,9 +1,9 @@
 #[derive(Debug)]
-struct User {
-    uid: u32,
-    guid: u32,
-    name: String,
-    home: String,
+pub struct User {
+    pub uid: u32,
+    pub guid: u32,
+    pub name: String,
+    pub home: String,
 }
 
 impl User {
@@ -32,7 +32,7 @@ impl User {
 
 #[derive(Debug)]
 pub struct GetentPasswdFacts {
-    users: Vec<User>,
+    pub users: Vec<User>,
 }
 
 impl GetentPasswdFacts {
