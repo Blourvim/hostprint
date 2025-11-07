@@ -29,8 +29,27 @@ pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) {
             .or(facts.hardware_platform.clone()),
     });
 }
-pub fn os_release_follow_up(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = OsReleaseFacts::new(stdout.into());
+pub fn os_release_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
+    let facts = OsReleaseFacts::new(stdout);
+
+    let os_info = host.os.get_or_insert(OSInfo {
+        name: None,
+        version: None,
+        family: None,
+        kernel: None,
+        arch: None,
+    });
+
+    if os_info.name.is_none() {
+        os_info.name = facts.pretty_name.clone().or(facts.name.clone());
+    }
+    if os_info.version.is_none() {
+        os_info.version = facts.version_id.clone().or(facts.version.clone());
+    }
+    if os_info.family.is_none() {
+        os_info.family = facts.id.clone();
+    }
+
 }
 pub fn getent_passwd_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     let facts = GetentPasswdFacts::from_getent(stdout);
