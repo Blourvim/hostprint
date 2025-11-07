@@ -4,7 +4,9 @@ use crate::model::{
         passwd::GetentPasswdFacts, ss::SsFacts, uname::UnameFacts, uptime::UptimeFacts, w::WFacts,
     },
     host::Host,
-    os::os::OSInfo, security::acesss_control::SystemUser,
+    metrics::metrics::Metrics,
+    os::os::OSInfo,
+    security::acesss_control::SystemUser,
 };
 
 pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) {
@@ -73,8 +75,17 @@ pub fn id_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
     let facts = IdFacts::from_std(stdout.into());
 }
 
-pub fn uptime_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = UptimeFacts::from_std(stdout.into());
+pub fn uptime_followup(stdout: &str, _stderr: &str, host: &mut Host) {
+    if let Some(facts) = UptimeFacts::from_std(stdout) {
+        let metrics = Metrics {
+            uptime_seconds: Some(facts.uptime_seconds),
+            current_time_seconds: Some(facts.current_time_seconds),
+            users_logged_in: Some(facts.users_logged_in),
+            load_average: Some(facts.load_average),
+        };
+
+        host.metrics = Some(metrics)
+    }
 }
 
 pub fn w_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
