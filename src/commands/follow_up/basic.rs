@@ -6,7 +6,7 @@ use crate::model::{
     host::Host,
     metrics::metrics::Metrics,
     os::os::OSInfo,
-    security::acesss_control::SystemUser,
+    security::{acesss_control::SystemUser, session::ActiveSession},
 };
 
 pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) {
@@ -88,8 +88,25 @@ pub fn uptime_followup(stdout: &str, _stderr: &str, host: &mut Host) {
     }
 }
 
-pub fn w_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = WFacts::from_std(stdout.into());
+pub fn w_followup(stdout: &str, _stderr: &str, host: &mut Host) {
+    if let Some(facts) = WFacts::from_std(stdout) {
+        let sessions: Vec<ActiveSession> = facts
+            .users
+            .iter()
+            .map(|u| ActiveSession {
+                username: u.username.clone(),
+                tty: u.tty.clone(),
+                from: u.from.clone(),
+                login_at: u.login_at.clone(),
+                idle: u.idle.clone(),
+                jcpu: u.jcpu.clone(),
+                pcpu: u.pcpu.clone(),
+                what: u.what.clone(),
+            })
+            .collect();
+
+        host.sessions = Some(sessions);
+    }
 }
 
 pub fn df_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
