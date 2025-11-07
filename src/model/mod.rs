@@ -3,3 +3,4 @@ pub mod hardware;
 pub mod os;
 pub mod facts;
 pub mod security;
+pub mod metrics;

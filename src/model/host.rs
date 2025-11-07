@@ -1,5 +1,6 @@
 use crate::model::{
     hardware::hardware::Hardware,
+    metrics::metrics::Metrics,
     os::os::OSInfo,
     security::acesss_control::{SystemGroup, SystemUser},
 };
@@ -29,6 +30,7 @@ pub struct Host {
     pub users: Option<Vec<SystemUser>>,
     pub groups: Option<Vec<SystemGroup>>,
     pub package_managers: HashSet<PackageManager>,
+    pub metrics: Option<Metrics>,
 }
 
 impl Default for Host {
@@ -40,6 +42,7 @@ impl Default for Host {
             current_user: None,
             os: None,
             hardware: None,
+            metrics: None,
         }
     }
 }
