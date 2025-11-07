@@ -1,4 +1,9 @@
-use crate::model::{hardware::hardware::Hardware, os::os::OSInfo};
+use crate::model::{
+    facts::id::Group,
+    hardware::hardware::Hardware,
+    os::os::OSInfo,
+    security::acesss_control::{SystemGroup, SystemUser},
+};
 use std::{collections::HashSet, default, u64};
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
@@ -16,28 +21,23 @@ pub enum PackageManagers {
     Flatpak(String),
     Other(String),
 }
-#[derive(serde::Deserialize, serde::Serialize, Debug, Clone, Hash, PartialEq, Eq)]
-pub struct Group {
-    pub pid: Option<u64>,
-    pub name: Option<u64>,
-}
-#[derive(serde::Deserialize, serde::Serialize, Debug, Clone, PartialEq, Eq)]
-pub struct SystemUser {
-    pub pid: Option<u64>,
-    pub groups: Option<HashSet<Group>>,
-}
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct Host {
-    // current_user: SystemUser,
+    current_user: Option<SystemUser>,
     pub os: Option<OSInfo>,
     pub hardware: Option<Hardware>,
+    pub users: Option<Vec<SystemUser>>,
+    pub groups: Option<Vec<SystemGroup>>,
     // package_managers: HashSet<PackageManagers>,
 }
 
 impl Default for Host {
     fn default() -> Host {
         Host {
+            users: None,
+            groups: None,
+            current_user: None,
             os: None,
             hardware: None,
         }
