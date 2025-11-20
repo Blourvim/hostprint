@@ -73,9 +73,9 @@ fn main() -> std::io::Result<()> {
                         p.push("index.html");
                     }
                     stream.write_all(b"HTTP/1.1 200 OK\r\n").unwrap();
-                    stream
-                        .write_all(b"Content-Type: text/html; charset=UTF-8\r\n")
-                        .unwrap();
+                    // stream
+                    //     .write_all(b"Content-Type: text/html; charset=UTF-8\r\n")
+                    //     .unwrap();
                     stream.write_all(b"\r\n").unwrap();
                     // stream.write_all(PAGE.as_bytes()).unwrap();
                     let body = match std::fs::read(&p) {
