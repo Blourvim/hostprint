@@ -1,4 +1,4 @@
-use std::{env, net::TcpListener};
+use std::{env, net::TcpListener, path};
 
 use hostprint::{
     commands::{basic, firewall, hardware, package, services},
@@ -47,21 +47,45 @@ fn main() -> std::io::Result<()> {
     }
 
     if let Some(serve_port) = get_arg_value("--serve") {
+        const PAGE_404: &str = include_str!("./view/template/not_found.html");
 
-        const PAGE: &str = include_str!("./view/template/index.html");
         let listener = std::net::TcpListener::bind(&serve_port).unwrap();
-
         println!("Dashboard is available at{:?}", &serve_port);
+
         for mut stream in listener.incoming().flatten() {
             let mut reader = std::io::BufReader::new(&mut stream);
             let mut l = String::new();
             reader.read_line(&mut l).unwrap();
-            stream.write_all(b"HTTP/1.1 200 OK\r\n").unwrap();
-            stream
-                .write_all(b"Content-Type: text/html; charset=UTF-8\r\n")
-                .unwrap();
-            stream.write_all(b"\r\n").unwrap();
-            stream.write_all(PAGE.as_bytes()).unwrap();
+
+            match l.trim().split(' ').collect::<Vec<_>>().as_slice() {
+                ["GET", resource, "HTTP/1.1"] => {
+                    loop {
+                        let mut l = String::new();
+                        reader.read_line(&mut l).unwrap();
+                        if l.trim().is_empty() {
+                            break;
+                        }
+                    }
+                    let mut p = std::path::PathBuf::new();
+                    p.push("src/view/template");
+                    p.push(resource.trim_start_matches('/'));
+                    if resource.ends_with("/") {
+                        p.push("index.html");
+                    }
+                    stream.write_all(b"HTTP/1.1 200 OK\r\n").unwrap();
+                    stream
+                        .write_all(b"Content-Type: text/html; charset=UTF-8\r\n")
+                        .unwrap();
+                    stream.write_all(b"\r\n").unwrap();
+                    // stream.write_all(PAGE.as_bytes()).unwrap();
+                    let body = match std::fs::read(&p) {
+                        Ok(bytes) => bytes,
+                        Err(_) => PAGE_404.as_bytes().to_vec(),
+                    };
+                    stream.write_all(&body)?;
+                }
+                _ => {}
+            }
         }
     }
     Ok(())
