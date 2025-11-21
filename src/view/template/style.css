@@ -6,8 +6,13 @@
       text-shadow: 0 0 1px #000;
     }
 
+    .header {
+      display: flex;
+      gap: 10px;
+    }
+
     .sidebar {
-      width: 20vw;
+      width: 18vw;
       background: #27293d;
       color: #fff;
       height: 100vh;
