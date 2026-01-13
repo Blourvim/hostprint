@@ -111,11 +111,11 @@ pub fn getent_passwd_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     }
 }
 
-pub fn id_followup(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+pub fn id_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = IdFacts::from_std(stdout.into());
 }
 
-pub fn uptime_followup(stdout: &str, _stderr: &str, host: &mut Host) {
+pub fn uptime_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     if let Some(facts) = UptimeFacts::from_std(stdout) {
         let metrics = Metrics {
             uptime_seconds: Some(facts.uptime_seconds),
@@ -128,7 +128,7 @@ pub fn uptime_followup(stdout: &str, _stderr: &str, host: &mut Host) {
     }
 }
 
-pub fn w_followup(stdout: &str, _stderr: &str, host: &mut Host) {
+pub fn w_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     if let Some(facts) = WFacts::from_std(stdout) {
         let sessions: Vec<ActiveSession> = facts
             .users
@@ -149,14 +149,15 @@ pub fn w_followup(stdout: &str, _stderr: &str, host: &mut Host) {
     }
 }
 
-pub fn df_followup(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+pub fn df_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = DfFacts::from_std(stdout.into());
 }
 
-pub fn du_followup(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+pub fn du_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = DuFacts::from_std(stdout.into());
 }
 
-pub fn ss_followup(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+pub fn ss_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = SsFacts::from_std(stdout.into());
 }
+pub fn whoami_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {

@@ -2,8 +2,8 @@ use crate::commands::{
     common::noop::noop_follow_up,
     follow_up::{
         basic::{
-            df_followup, du_followup, getent_passwd_follow_up, groups_follow_up, id_followup,
-            os_release_follow_up, ss_followup, uname_follow_up, uptime_followup, w_followup,
+            df_follow_up, du_follow_up, getent_passwd_follow_up, groups_follow_up, id_follow_up,
+            os_release_follow_up, ss_follow_up, uname_follow_up, uptime_follow_up, w_follow_up,
         },
         network::network_interfaces_follow_up,
     },
@@ -29,18 +29,18 @@ pub fn default_units() -> Vec<Unit> {
         ),
         Unit::new("OS Release", "cat /etc/os-release", os_release_follow_up),
         Unit::new("Users", "getent passwd", getent_passwd_follow_up),
-        Unit::new("User Info", "id", id_followup),
+        Unit::new("User Info", "id", id_follow_up),
         // TODO uptime for containers out of scope for now
-        Unit::new("Uptime", "uptime", uptime_followup),
+        Unit::new("Uptime", "uptime", uptime_follow_up),
         // TODO w for containers out of scope for now
-        Unit::new("Logged-in Users", "w -h ", w_followup),
-        Unit::new("Disk Usage", "df", df_followup),
+        Unit::new("Logged-in Users", "w -h ", w_follow_up),
+        Unit::new("Disk Usage", "df", df_follow_up),
         Unit::new(
             "Largest Directories",
             "du -sh --time /* 2>/dev/null",
-            du_followup,
+            du_follow_up,
         ),
-        Unit::new("Open Ports", "ss -HtulnpO", ss_followup),
+        Unit::new("Open Ports", "ss -HtulnpO", ss_follow_up),
         Unit::new("Network Interfaces", "ip addr", network_interfaces_follow_up),
         //  OUT OF SCOPE
         //  -----------------------------------
@@ -72,7 +72,7 @@ pub fn default_units() -> Vec<Unit> {
         // Unit::new("Recent Syslog", "sudo tail -n 20 /var/log/syslog 2>/dev/null || sudo tail -n 20 /var/log/messages", noop_follow_up),
 
         // already implemented another comand for it unnecesary for now
-        //    Unit::new("Current User", "whoami", noop_follow_up),
+        Unit::new("Current User", "whoami", noop_follow_up),
         Unit::new("Groups", "groups", groups_follow_up),
     ];
 }
