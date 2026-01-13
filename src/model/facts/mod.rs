@@ -12,3 +12,4 @@ pub mod groups;
 pub mod network;
 pub mod package_manager;
 pub mod packages;
+pub mod whoami;

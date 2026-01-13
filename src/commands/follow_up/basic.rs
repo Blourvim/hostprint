@@ -1,4 +1,5 @@
 use crate::model::facts::groups::GroupsFacts;
+use crate::model::facts::whoami::WhoamiFacts;
 use crate::model::{
     facts::{
         df::DfFacts, du::DuFacts, id::IdFacts, os_release::OsReleaseFacts,
@@ -161,3 +162,5 @@ pub fn ss_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = SsFacts::from_std(stdout.into());
 }
 pub fn whoami_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+    let _facts = WhoamiFacts::from_std(stdout.into());
+}
