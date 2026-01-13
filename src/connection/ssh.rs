@@ -132,4 +132,8 @@ impl SSHConnection {
 
         Ok(output)
     }
+
+    pub fn child(&self) -> &Child {
+        &self.child
+    }
 }

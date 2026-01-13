@@ -35,7 +35,7 @@ impl SsFacts {
 impl SsEntry {
     pub fn from_line(line: &str) -> Result<Self, String> {
         // Split into at most 7 parts, to preserve the process field (which may contain spaces)
-        let mut parts: Vec<&str> = line.split_whitespace().collect();
+        let parts: Vec<&str> = line.split_whitespace().collect();
 
         if parts.len() < 6 {
             return Err(format!("Malformed ss line: {}", line));

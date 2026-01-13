@@ -1,12 +1,12 @@
 use crate::model::{
     facts::network::NetworkFacts,
+    hardware::hardware::{Hardware, NetworkInterface},
     host::Host,
-    hardware::hardware::{NetworkInterface, Hardware},
 };
 
 pub fn network_interfaces_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     let facts = NetworkFacts::from_str(stdout);
-    
+
     let mut interfaces = Vec::new();
     for fact in facts.interfaces {
         interfaces.push(NetworkInterface {
@@ -26,7 +26,7 @@ pub fn network_interfaces_follow_up(stdout: &str, _stderr: &str, host: &mut Host
         // Since Hardware has many fields, we should probably use a default or builder if available.
         // But Hardware doesn't derive Default.
         // I'll just initialize with None.
-        let mut hardware = Hardware {
+        let hardware = Hardware {
             cpu_architecture: None,
             cpu_model: None,
             cpu_vendor: None,

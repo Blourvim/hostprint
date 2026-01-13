@@ -1,3 +1,4 @@
+use crate::model::facts::groups::GroupsFacts;
 use crate::model::{
     facts::{
         df::DfFacts, du::DuFacts, id::IdFacts, os_release::OsReleaseFacts,
@@ -6,18 +7,23 @@ use crate::model::{
     host::Host,
     metrics::metrics::Metrics,
     os::os::OSInfo,
-    security::{acesss_control::{SystemUser, SystemGroup}, session::ActiveSession},
+    security::{
+        acesss_control::{SystemGroup, SystemUser},
+        session::ActiveSession,
+    },
 };
-use crate::model::facts::groups::GroupsFacts;
 
 pub fn groups_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     let facts = GroupsFacts::from_str(stdout);
-    let groups: Vec<SystemGroup> = facts.groups.into_iter().map(|g| SystemGroup {
-        name: g,
-        gid: None,
-        members: None,
-    }).collect();
-    
+    let groups: Vec<SystemGroup> = facts
+        .groups
+        .into_iter()
+        .map(|g| SystemGroup {
+            name: Some(g),
+            gid: None,
+        })
+        .collect();
+
     if let Some(existing_groups) = &mut host.groups {
         existing_groups.extend(groups);
     } else {
@@ -25,7 +31,7 @@ pub fn groups_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     }
 }
 
-pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) {
+pub fn uname_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     let facts = UnameFacts::new(stdout.into());
 
     host.os = Some(OSInfo {
@@ -65,7 +71,6 @@ pub fn os_release_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     if os_info.family.is_none() {
         os_info.family = facts.id.clone();
     }
-
 }
 pub fn getent_passwd_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     let facts = GetentPasswdFacts::from_getent(stdout);
@@ -106,8 +111,8 @@ pub fn getent_passwd_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     }
 }
 
-pub fn id_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = IdFacts::from_std(stdout.into());
+pub fn id_followup(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+    let _facts = IdFacts::from_std(stdout.into());
 }
 
 pub fn uptime_followup(stdout: &str, _stderr: &str, host: &mut Host) {
@@ -144,14 +149,14 @@ pub fn w_followup(stdout: &str, _stderr: &str, host: &mut Host) {
     }
 }
 
-pub fn df_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = DfFacts::from_std(stdout.into());
+pub fn df_followup(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+    let _facts = DfFacts::from_std(stdout.into());
 }
 
-pub fn du_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = DuFacts::from_std(stdout.into());
+pub fn du_followup(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+    let _facts = DuFacts::from_std(stdout.into());
 }
 
-pub fn ss_followup(stdout: &str, stderr: &str, host: &mut Host) -> () {
-    let facts = SsFacts::from_std(stdout.into());
+pub fn ss_followup(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
+    let _facts = SsFacts::from_std(stdout.into());
 }

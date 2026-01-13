@@ -41,7 +41,7 @@ pub fn memory_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
         hardware.swap_total_kb = swap_total;
         hardware.swap_free_kb = swap_free;
     } else {
-         let mut hardware = Hardware {
+         let hardware = Hardware {
             cpu_architecture: None,
             cpu_model: None,
             cpu_vendor: None,

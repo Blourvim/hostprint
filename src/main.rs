@@ -1,11 +1,11 @@
-use std::{env, net::TcpListener, path};
+use std::env;
 
 use hostprint::{
     commands::{basic, firewall, hardware, package, services},
     connection::ssh::SSHClient,
     model::host::Host,
 };
-use log::{debug, error, info, trace, warn, LevelFilter};
+use log::{debug, info,  warn, LevelFilter};
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use std::io::{BufRead, Write};
 

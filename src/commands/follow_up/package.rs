@@ -2,7 +2,6 @@ use crate::model::{
     facts::{package_manager::PackageManagerFacts, packages::PackagesFacts},
     host::{Host, PackageManager},
 };
-use std::collections::HashSet;
 
 pub fn package_manager_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     let facts = PackageManagerFacts::from_str(stdout);
