@@ -5,9 +5,8 @@ use hostprint::{
     connection::ssh::SSHClient,
     model::host::Host,
 };
-use log::{debug, info,  warn, LevelFilter};
+use log::{debug, info, LevelFilter};
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
-use std::io::{BufRead, Write};
 
 fn get_arg_value(flag: &str) -> Option<String> {
     let mut args = env::args();
@@ -45,7 +44,7 @@ fn init_logging() {
         ColorChoice::Auto,
     )
     .unwrap();
-    
+
     debug!("Logging initialized at level {:?}", level);
 }
 
@@ -59,7 +58,7 @@ fn main() -> std::io::Result<()> {
         .expect("Port must be a number");
     let key = get_arg_value("--key").expect("Missing --key argument");
     let username = get_arg_value("--username").unwrap_or("".to_string());
-    
+
     info!("Starting hostprint for {}@{}", username, address);
 
     let mut host = Host::new();
@@ -77,11 +76,11 @@ fn main() -> std::io::Result<()> {
         hardware::hardware_units(),
     ]
     .concat();
-    
+
     debug!("Collected {} units to execute", units.len());
 
     let mut shell = client.open_shell()?;
-    
+
     for unit in units.iter() {
         info!("Executing unit: {}", unit.name);
         println!("\n=== {} ===", unit.name);
@@ -90,54 +89,5 @@ fn main() -> std::io::Result<()> {
         (unit.follow_up)(&stdout, "", &mut host);
     }
 
-    if let Some(serve_port) = get_arg_value("--serve") {
-        const PAGE_404: &str = include_str!("./view/template/not_found.html");
-
-        let listener = std::net::TcpListener::bind(&serve_port).unwrap();
-        info!("Dashboard is available at port {:?}", &serve_port);
-        println!("Dashboard is available at{:?}", &serve_port);
-
-        for mut stream in listener.incoming().flatten() {
-            let mut reader = std::io::BufReader::new(&mut stream);
-            let mut l = String::new();
-            reader.read_line(&mut l).unwrap();
-
-            match l.trim().split(' ').collect::<Vec<_>>().as_slice() {
-                ["GET", resource, "HTTP/1.1"] => {
-                    debug!("Request: GET {}", resource);
-                    loop {
-                        let mut l = String::new();
-                        reader.read_line(&mut l).unwrap();
-                        if l.trim().is_empty() {
-                            break;
-                        }
-                    }
-                    let mut p = std::path::PathBuf::new();
-                    p.push("src/view/template");
-                    p.push(resource.trim_start_matches('/'));
-                    if resource.ends_with("/") {
-                        p.push("index.html");
-                    }
-                    stream.write_all(b"HTTP/1.1 200 OK\r\n").unwrap();
-                    // stream
-                    //     .write_all(b"Content-Type: text/html; charset=UTF-8\r\n")
-                    //     .unwrap();
-                    stream.write_all(b"\r\n").unwrap();
-                    // stream.write_all(PAGE.as_bytes()).unwrap();
-                    let body = match std::fs::read(&p) {
-                        Ok(bytes) => bytes,
-                        Err(_) => {
-                            warn!("404 Not Found: {:?}", p);
-                            PAGE_404.as_bytes().to_vec()
-                        },
-                    };
-                    stream.write_all(&body)?;
-                }
-                _ => {
-                    warn!("Invalid request: {}", l.trim());
-                }
-            }
-        }
-    }
     Ok(())
 }
