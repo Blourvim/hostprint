@@ -1,6 +1,7 @@
 use crate::model::{
     hardware::hardware::Hardware,
     metrics::metrics::Metrics,
+    network::socket::Socket,
     os::os::OSInfo,
     security::{
         acesss_control::{SystemGroup, SystemUser},
@@ -35,6 +36,8 @@ pub struct Host {
     pub package_managers: HashSet<PackageManager>,
     pub metrics: Option<Metrics>,
     pub sessions: Option<Vec<ActiveSession>>,
+    pub sockets: Option<Vec<Socket>>,
+    pub packages: Option<Vec<crate::model::facts::packages::PackageFact>>,
 }
 
 impl Default for Host {
@@ -48,6 +51,8 @@ impl Default for Host {
             hardware: None,
             metrics: None,
             sessions: None,
+            sockets: None,
+            packages: None,
         }
     }
 }

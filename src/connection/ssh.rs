@@ -113,6 +113,7 @@ impl SSHConnection {
         const SENTINEL: &str = "__COMMAND_UNIT_DONE__";
 
         // We echo the sentinel back as a way to determine that a value is returned
+        log::debug!("Sending command over SSH: {}", command);
         writeln!(self.stdin, "{}; echo {}", command, SENTINEL)?;
         self.stdin.flush()?;
 
@@ -126,6 +127,8 @@ impl SSHConnection {
             output.push_str(&line);
             output.push('\n');
         }
+        
+        log::trace!("Command output received (len: {})", output.len());
 
         Ok(output)
     }

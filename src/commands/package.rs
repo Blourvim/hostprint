@@ -1,14 +1,15 @@
 use crate::commands::common::noop::noop_follow_up;
 use crate::commands::unit::Unit;
+use crate::commands::follow_up::package::{package_manager_follow_up, packages_follow_up};
 
 
 pub fn package_units() -> Vec<Unit> {
     vec![
         // Detect package manager
-        Unit::new("Package Manager", "which apt || which dpkg || which yum || which dnf || which rpm || which pacman", noop_follow_up),
+        Unit::new("Package Manager", "which apt || which dpkg || which yum || which dnf || which rpm || which pacman", package_manager_follow_up),
 
         // Debian/Ubuntu
-        Unit::new("Installed Packages (dpkg)", "dpkg -l | head -20", noop_follow_up),
+        Unit::new("Installed Packages (dpkg)", "dpkg -l | head -20", packages_follow_up),
         Unit::new("Installed Packages Count (dpkg)", "dpkg -l | wc -l", noop_follow_up),
         Unit::new("APT Updates Available", "apt list --upgradable 2>/dev/null | head -20", noop_follow_up),
 

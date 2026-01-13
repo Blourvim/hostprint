@@ -7,3 +7,8 @@ pub mod w;
 pub mod df;
 pub mod du;
 pub mod ss;
+pub mod memory;
+pub mod groups;
+pub mod network;
+pub mod package_manager;
+pub mod packages;

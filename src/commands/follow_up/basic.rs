@@ -6,8 +6,24 @@ use crate::model::{
     host::Host,
     metrics::metrics::Metrics,
     os::os::OSInfo,
-    security::{acesss_control::SystemUser, session::ActiveSession},
+    security::{acesss_control::{SystemUser, SystemGroup}, session::ActiveSession},
 };
+use crate::model::facts::groups::GroupsFacts;
+
+pub fn groups_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
+    let facts = GroupsFacts::from_str(stdout);
+    let groups: Vec<SystemGroup> = facts.groups.into_iter().map(|g| SystemGroup {
+        name: g,
+        gid: None,
+        members: None,
+    }).collect();
+    
+    if let Some(existing_groups) = &mut host.groups {
+        existing_groups.extend(groups);
+    } else {
+        host.groups = Some(groups);
+    }
+}
 
 pub fn uname_follow_up(stdout: &str, stderr: &str, host: &mut Host) {
     let facts = UnameFacts::new(stdout.into());

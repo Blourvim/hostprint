@@ -4,3 +4,4 @@ pub mod os;
 pub mod facts;
 pub mod security;
 pub mod metrics;
+pub mod network;

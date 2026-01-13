@@ -1,12 +1,13 @@
 use crate::commands::common::noop::noop_follow_up;
 use crate::commands::unit::Unit;
+use crate::commands::follow_up::hardware::memory_follow_up;
 
 pub fn hardware_units() -> Vec<Unit> {
     vec![
         // CPU
         Unit::new("CPU Info", "lscpu", noop_follow_up),
         // RAM
-        Unit::new("Memory Info", "free -h", noop_follow_up),
+        Unit::new("Memory Info", "free -h", memory_follow_up),
         Unit::new("Memory Details", "cat /proc/meminfo", noop_follow_up),
         // GPU
         Unit::new(

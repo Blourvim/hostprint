@@ -5,7 +5,10 @@ use hostprint::{
     connection::ssh::SSHClient,
     model::host::Host,
 };
+use log::{debug, error, info, trace, warn, LevelFilter};
+use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 use std::io::{BufRead, Write};
+
 fn get_arg_value(flag: &str) -> Option<String> {
     let mut args = env::args();
     while let Some(arg) = args.next() {
@@ -15,7 +18,40 @@ fn get_arg_value(flag: &str) -> Option<String> {
     }
     None
 }
+
+fn init_logging() {
+    let mut verbosity = 0;
+    for arg in env::args() {
+        if arg == "-v" {
+            verbosity += 1;
+        } else if arg == "-vv" {
+            verbosity += 2;
+        } else if arg == "-vvv" {
+            verbosity += 3;
+        }
+    }
+
+    let level = match verbosity {
+        0 => LevelFilter::Warn,
+        1 => LevelFilter::Info,
+        2 => LevelFilter::Debug,
+        _ => LevelFilter::Trace,
+    };
+
+    TermLogger::init(
+        level,
+        Config::default(),
+        TerminalMode::Mixed,
+        ColorChoice::Auto,
+    )
+    .unwrap();
+    
+    debug!("Logging initialized at level {:?}", level);
+}
+
 fn main() -> std::io::Result<()> {
+    init_logging();
+
     let address = get_arg_value("--address").expect("Missing --address argument");
     let port: u16 = get_arg_value("--port")
         .expect("Missing --port argument")
@@ -23,6 +59,9 @@ fn main() -> std::io::Result<()> {
         .expect("Port must be a number");
     let key = get_arg_value("--key").expect("Missing --key argument");
     let username = get_arg_value("--username").unwrap_or("".to_string());
+    
+    info!("Starting hostprint for {}@{}", username, address);
+
     let mut host = Host::new();
 
     let client = SSHClient::new(address)
@@ -38,11 +77,16 @@ fn main() -> std::io::Result<()> {
         hardware::hardware_units(),
     ]
     .concat();
-    let mut shell = client.open_shell()?;
+    
+    debug!("Collected {} units to execute", units.len());
 
+    let mut shell = client.open_shell()?;
+    
     for unit in units.iter() {
+        info!("Executing unit: {}", unit.name);
         println!("\n=== {} ===", unit.name);
         let stdout = shell.exec(&unit.command)?;
+        debug!("Output for {}: {}", unit.name, stdout.trim());
         (unit.follow_up)(&stdout, "", &mut host);
     }
 
@@ -50,6 +94,7 @@ fn main() -> std::io::Result<()> {
         const PAGE_404: &str = include_str!("./view/template/not_found.html");
 
         let listener = std::net::TcpListener::bind(&serve_port).unwrap();
+        info!("Dashboard is available at port {:?}", &serve_port);
         println!("Dashboard is available at{:?}", &serve_port);
 
         for mut stream in listener.incoming().flatten() {
@@ -59,6 +104,7 @@ fn main() -> std::io::Result<()> {
 
             match l.trim().split(' ').collect::<Vec<_>>().as_slice() {
                 ["GET", resource, "HTTP/1.1"] => {
+                    debug!("Request: GET {}", resource);
                     loop {
                         let mut l = String::new();
                         reader.read_line(&mut l).unwrap();
@@ -80,11 +126,16 @@ fn main() -> std::io::Result<()> {
                     // stream.write_all(PAGE.as_bytes()).unwrap();
                     let body = match std::fs::read(&p) {
                         Ok(bytes) => bytes,
-                        Err(_) => PAGE_404.as_bytes().to_vec(),
+                        Err(_) => {
+                            warn!("404 Not Found: {:?}", p);
+                            PAGE_404.as_bytes().to_vec()
+                        },
                     };
                     stream.write_all(&body)?;
                 }
-                _ => {}
+                _ => {
+                    warn!("Invalid request: {}", l.trim());
+                }
             }
         }
     }

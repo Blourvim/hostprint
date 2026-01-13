@@ -1,74 +1,74 @@
 #[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
 pub struct Hardware {
     // CPU
-    cpu_architecture: Option<String>,
-    cpu_model: Option<String>,
-    cpu_vendor: Option<String>,
-    cpu_cores: Option<u32>,
-    cpu_threads: Option<u32>,
-    cpu_frequency_mhz: Option<f64>,
-    cpu_flags: Option<Vec<String>>,
+    pub cpu_architecture: Option<String>,
+    pub cpu_model: Option<String>,
+    pub cpu_vendor: Option<String>,
+    pub cpu_cores: Option<u32>,
+    pub cpu_threads: Option<u32>,
+    pub cpu_frequency_mhz: Option<f64>,
+    pub cpu_flags: Option<Vec<String>>,
 
     // Memory
-    memory_total_kb: Option<u64>,
-    memory_free_kb: Option<u64>,
-    memory_available_kb: Option<u64>,
-    swap_total_kb: Option<u64>,
-    swap_free_kb: Option<u64>,
+    pub memory_total_kb: Option<u64>,
+    pub memory_free_kb: Option<u64>,
+    pub memory_available_kb: Option<u64>,
+    pub swap_total_kb: Option<u64>,
+    pub swap_free_kb: Option<u64>,
 
     // Storage
-    disks: Option<Vec<DiskInfo>>,
-    partitions: Option<Vec<PartitionInfo>>,
+    pub disks: Option<Vec<DiskInfo>>,
+    pub partitions: Option<Vec<PartitionInfo>>,
 
     // Motherboard / BIOS
-    motherboard_vendor: Option<String>,
-    motherboard_model: Option<String>,
-    bios_vendor: Option<String>,
-    bios_version: Option<String>,
-    bios_date: Option<String>,
+    pub motherboard_vendor: Option<String>,
+    pub motherboard_model: Option<String>,
+    pub bios_vendor: Option<String>,
+    pub bios_version: Option<String>,
+    pub bios_date: Option<String>,
 
     // GPU
-    gpus: Option<Vec<GpuInfo>>,
+    pub gpus: Option<Vec<GpuInfo>>,
 
     // Network
-    network_interfaces: Option<Vec<NetworkInterface>>,
+    pub network_interfaces: Option<Vec<NetworkInterface>>,
 
-    uptime_seconds: Option<u64>,
-    battery_capacity_percent: Option<f32>,
-    battery_status: Option<String>,
+    pub uptime_seconds: Option<u64>,
+    pub battery_capacity_percent: Option<f32>,
+    pub battery_status: Option<String>,
 }
 
 #[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
-struct DiskInfo {
-    name: String,
-    model: Option<String>,
-    size_bytes: Option<u64>,
-    rotational: Option<bool>, // SSD = false, HDD = true
+pub struct DiskInfo {
+    pub name: String,
+    pub model: Option<String>,
+    pub size_bytes: Option<u64>,
+    pub rotational: Option<bool>, // SSD = false, HDD = true
 }
 
 #[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
-struct PartitionInfo {
-    name: String,
-    mount_point: Option<String>,
-    filesystem: Option<String>,
-    size_bytes: Option<u64>,
-    used_bytes: Option<u64>,
+pub struct PartitionInfo {
+    pub name: String,
+    pub mount_point: Option<String>,
+    pub filesystem: Option<String>,
+    pub size_bytes: Option<u64>,
+    pub used_bytes: Option<u64>,
 }
 
 #[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
-struct GpuInfo {
-    name: Option<String>,
-    vendor: Option<String>,
-    memory_mb: Option<u64>,
-    driver: Option<String>,
+pub struct GpuInfo {
+    pub name: Option<String>,
+    pub vendor: Option<String>,
+    pub memory_mb: Option<u64>,
+    pub driver: Option<String>,
 }
 
 #[derive(serde::Deserialize,serde::Serialize,Debug, Clone)]
-struct NetworkInterface {
-    name: String,
-    mac_address: Option<String>,
-    ipv4_addresses: Option<Vec<String>>,
-    ipv6_addresses: Option<Vec<String>>,
-    speed_mbps: Option<u64>,
-    is_up: Option<bool>,
+pub struct NetworkInterface {
+    pub name: String,
+    pub mac_address: Option<String>,
+    pub ipv4_addresses: Option<Vec<String>>,
+    pub ipv6_addresses: Option<Vec<String>>,
+    pub speed_mbps: Option<u64>,
+    pub is_up: Option<bool>,
 }

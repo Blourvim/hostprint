@@ -1,8 +1,11 @@
 use crate::commands::{
     common::noop::noop_follow_up,
-    follow_up::basic::{
-        df_followup, du_followup, getent_passwd_follow_up, id_followup, os_release_follow_up,
-        ss_followup, uname_follow_up, uptime_followup, w_followup,
+    follow_up::{
+        basic::{
+            df_followup, du_followup, getent_passwd_follow_up, groups_follow_up, id_followup,
+            os_release_follow_up, ss_followup, uname_follow_up, uptime_followup, w_followup,
+        },
+        network::network_interfaces_follow_up,
     },
     unit::Unit,
 };
@@ -31,17 +34,16 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Uptime", "uptime", uptime_followup),
         // TODO w for containers out of scope for now
         Unit::new("Logged-in Users", "w -h ", w_followup),
-        // TODO uncomment later
-        // Unit::new("Disk Usage", "df", df_followup),
-        // Unit::new(
-        //     "Largest Directories",
-        //     "du -sh --time /* 2>/dev/null",
-        //     du_followup,
-        // ),
+        Unit::new("Disk Usage", "df", df_followup),
+        Unit::new(
+            "Largest Directories",
+            "du -sh --time /* 2>/dev/null",
+            du_followup,
+        ),
         Unit::new("Open Ports", "ss -HtulnpO", ss_followup),
-        // TODO ip has json output, do this when implementing serde
-        Unit::new("Network Interfaces", "ip addr", noop_follow_up),
-        // out of scope
+        Unit::new("Network Interfaces", "ip addr", network_interfaces_follow_up),
+        //  OUT OF SCOPE
+        //  -----------------------------------
         // Unit::new(
         //     "Running Services",
         //     "systemctl list-units --type=service --state=running",
@@ -71,6 +73,6 @@ pub fn default_units() -> Vec<Unit> {
 
         // already implemented another comand for it unnecesary for now
         //    Unit::new("Current User", "whoami", noop_follow_up),
-        //Unit::new("Groups", "groups", noop_follow_up),
+        Unit::new("Groups", "groups", groups_follow_up),
     ];
 }
