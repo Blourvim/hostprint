@@ -8,6 +8,15 @@ fn generate_groups_section(
         if groups.is_empty() {
             content.push_str("No group information available");
         } else {
+            content.push_str("| GID | Group Name |\n");
+            content.push_str("| --- | ---------- |\n");
+
+            for group in groups {
+                let gid = group.gid.unwrap_or(0);
+                let name = group.name.as_deref().unwrap_or("N/A");
+
+                content.push_str(&format!("| {} | {} |\n", gid, name));
+            }
         }
     } else {
         content.push_str("No group information available");
