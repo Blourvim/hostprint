@@ -1,11 +1,20 @@
 fn generate_groups_section(
     content: &mut String,
-    _groups: &Option<Vec<crate::model::security::acesss_control::SystemGroup>>,
+    groups: &Option<Vec<crate::model::security::acesss_control::SystemGroup>>,
 ) {
-    content.push_str("System Groups\n");
+    content.push_str("## System Groups\n");
+
+    if let Some(groups) = groups {
+        if groups.is_empty() {
+            content.push_str("No group information available");
+        } else {
+        }
+    } else {
+        content.push_str("No group information available");
+    }
 }
 #[cfg(test)]
-mod generate_groups_tests{
+mod generate_groups_tests {
     use super::*;
 
     use crate::model::security::acesss_control::SystemGroup;
@@ -38,6 +47,16 @@ mod generate_groups_tests{
         let mut content = String::new();
 
         generate_groups_section(&mut content, &None);
+
+        assert!(content.contains("## System Groups"));
+        assert!(content.contains("No group information available"));
+    }
+
+    #[test]
+    fn generates_groups_section_with_empty_groups() {
+        let mut content = String::new();
+
+        generate_groups_section(&mut content, &Some(vec![]));
 
         assert!(content.contains("## System Groups"));
         assert!(content.contains("No group information available"));
