@@ -1,6 +1,4 @@
 use std::fmt::Write;
-pub mod md;
-pub mod renderers;
 
 use crate::model::host::Host;
 
