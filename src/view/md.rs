@@ -1,7 +1,6 @@
 use std::fmt::Write;
 pub mod md;
 pub mod renderers;
-pub mod users;
 
 use crate::model::host::Host;
 
