@@ -7,8 +7,44 @@ pub fn generate_active_sessions_section(
     sessions: &Option<Vec<ActiveSession>>,
 ) {
     writeln!(content, "## Active Sessions").unwrap();
-}
 
+    let Some(sessions) = sessions else {
+        writeln!(content, "No active sessions").unwrap();
+        return;
+    };
+
+    if sessions.is_empty() {
+        writeln!(content, "No active sessions").unwrap();
+        return;
+    }
+
+    writeln!(
+        content,
+        "| User | TTY | From | Login At | Idle | JCPU | PCPU | What |"
+    )
+    .unwrap();
+    writeln!(
+        content,
+        "|------|-----|------|----------|------|------|------|------|"
+    )
+    .unwrap();
+
+    for s in sessions {
+        writeln!(
+            content,
+            "| {} | {} | {} | {} | {} | {} | {} | {} |",
+            s.username,
+            s.tty,
+            s.from,
+            s.login_at,
+            s.idle,
+            s.jcpu,
+            s.pcpu,
+            s.what
+        )
+        .unwrap();
+    }
+}
 
 #[cfg(test)]
 mod generate_active_sessions_tests {
