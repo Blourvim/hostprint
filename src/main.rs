@@ -144,8 +144,14 @@ fn main() -> std::io::Result<()> {
         (unit.follow_up)(&stdout, "", &mut host);
     }
 
-    let md_document = Md::new(&host);
-    println!("{}", md_document.content());
+    match get_arg_value("--display").as_deref() {
+        Some("md") => {
+            let md_document = Md::new(&host);
+            println!("{}", md_document.content());
+        }
+        Some(_) => {}
+        None => println!("{:#?}", host),
+    }
 
     Ok(())
 }
