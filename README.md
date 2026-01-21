@@ -1,14 +1,14 @@
 # hostprint: Agentless Linux Server Inspection over SSH
 
-**hostprint** is a lightweight, agentless Linux system inspection tool that connects over SSH and snapshots a server’s state into structured JSON. It is designed for quickly understanding undocumented, inherited, or unfamiliar Linux servers without installing agents or modifying system state.
+**hostprint** is a lightweight, agentless Linux system inspection tool that connects over SSH and snapshots a server’s state into a structured data format. It is designed for quickly understanding undocumented, inherited, or unfamiliar Linux servers without installing agents or modifying system state.
 
-This project is particularly useful for infrastructure audits, incident response, server discovery, environment documentation, and as structured input for automation or LLM-based analysis.
+This project is particularly useful for, incident response, server discovery, environment documentation, and as structured input for automation or LLM-based analysis.
 
 ---
 
 ## What hostprint Does
 
-hostprint connects to a remote Linux host via SSH, executes a curated set of read-only system commands, parses their output, and produces a normalized JSON snapshot describing the machine’s current state.
+hostprint connects to a remote Linux host via SSH, executes a curated set of read-only system commands, parses their output, and produces an artifact describing the machine’s current state.
 
 The snapshot may include:
 
@@ -42,7 +42,7 @@ The resulting JSON is intended to be:
 
 hostprint is optimized for scenarios such as:
 
-* Auditing unknown or inherited Linux servers
+* Understanding unknown or inherited Linux servers
 * Generating baseline system documentation
 * Comparing server state across time or environments
 * Feeding structured host data into analysis or AI systems
@@ -93,23 +93,62 @@ target/release/hostprint
 
 ---
 
+
 ## Usage
 
+### Local run
+
+Runs basic system inspection on the local machine.
+
 ```bash
-./hostprint \
-  --address 10.0.0.5 \
-  --port 22 \
-  --username debian \
-  --key ~/.ssh/id_rsa
+hostprint
 ```
 
-The tool connects to the specified host, performs inspection, and emits structured JSON describing the system state.
+---
+
+### SSH run
+
+Runs the same inspection on a remote host over SSH.
+
+```bash
+hostprint \
+  --address example.com \
+  --username user \
+  --port 22 \
+  --key /path/to/key
+```
+
+ When using `--address` following values will default:
+
+* `--username`: root
+* `--port`:22
+* `--key`:~/.ssh/id_rsa
+
+---
+
+### Options
+
+```text
+--disk           Include disk inspection (slower)
+--display md     Output results as Markdown
+-v / -vv / -vvv  Increase log verbosity
+```
+
+---
+
+### Output
+
+* Default: debug view of the collected host data
+* `--display md`: Markdown report
+
+
+The tool connects to the specified host, performs inspection, and emits structured data describing the system state.
 
 ---
 
 ## Output
 
-hostprint produces normalized JSON and serves an html file suitable for:
+hostprint produces a markdown file or the struct representing the state of the machine for:
 
 * Manual inspection
 * Version control and diffs
