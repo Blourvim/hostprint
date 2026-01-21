@@ -1,7 +1,7 @@
 use std::env::{self};
 
 use hostprint::{
-    commands::{basic, disk, firewall, hardware, package, services},
+    commands::{basic, disk},
     connection::{
         common::{exec, ShellTransport},
         local::LocalBash,
@@ -11,7 +11,6 @@ use hostprint::{
     view::md::md::Md,
 };
 use log::{debug, info, LevelFilter};
-use serde::de::value;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 
 fn get_arg_value(flag: &str) -> Option<String> {
