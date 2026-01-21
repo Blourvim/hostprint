@@ -152,6 +152,7 @@ pub fn w_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
 
 pub fn df_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = DfFacts::from_std(stdout.into());
+
 }
 
 pub fn du_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {

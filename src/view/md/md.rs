@@ -7,7 +7,7 @@ pub struct Md {
 }
 
 impl Md {
-    pub fn new(host: Host) -> Self {
+    pub fn new(host: &Host) -> Self {
         let mut content = String::new();
         Self::generate_markdown(&mut content, &host);
         Self { content }
@@ -22,7 +22,5 @@ impl Md {
         writeln!(content, "*Generated from system inventory data*\n").unwrap();
 
         todo!();
-
-        // Current User Section
     }
 }

@@ -34,12 +34,12 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Uptime", "uptime", uptime_follow_up),
         // TODO w for containers out of scope for now
         Unit::new("Logged-in Users", "w -h ", w_follow_up),
-        Unit::new("Disk Usage", "df", df_follow_up),
-        Unit::new(
-            "Largest Directories",
-            "du -sh --time /* 2>/dev/null",
-            du_follow_up,
-        ),
+   //     Unit::new("Disk Usage", "df", df_follow_up),
+     //   Unit::new(
+     //       "Largest Directories",
+     //       "du -sh --time /* 2>/dev/null",
+     //       du_follow_up,
+     //   ),
         Unit::new("Open Ports", "ss -HtulnpO", ss_follow_up),
         Unit::new("Network Interfaces", "ip addr", network_interfaces_follow_up),
         //  OUT OF SCOPE

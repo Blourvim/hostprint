@@ -1,7 +1,17 @@
-use std::{path::PathBuf, process::Command};
+use std::io::BufReader;
+use std::path::PathBuf;
+use std::process::{Child, Command, Stdio};
 
-use std::io::{BufRead, BufReader, Read, Write};
-use std::process::{Child, ChildStdin, ChildStdout, Stdio};
+use crate::connection::common::ShellTransport;
+
+#[derive(Debug, Clone)]
+pub enum SSHAuth {
+    PrivateKey {
+        path: PathBuf,
+        passphrase: Option<String>,
+    },
+    Password(String),
+}
 
 #[derive(Debug, Clone)]
 pub struct SSHClient {
@@ -14,30 +24,30 @@ pub struct SSHClient {
     verbose: bool,
 }
 
-#[derive(Debug, Clone)]
-pub enum SSHAuth {
-    Password(String),
-    PrivateKey {
-        path: PathBuf,
-        passphrase: Option<String>,
-    },
+pub struct SSHConnection {
+    child: Child,
+    stdin: std::process::ChildStdin,
+    stdout: BufReader<std::process::ChildStdout>,
 }
+
 impl SSHClient {
-    pub fn new(destination: impl Into<String>) -> Self {
+    pub fn new(destination: String) -> SSHClient {
         Self {
-            destination: destination.into(),
+            destination,
             command: "uname -a".into(),
             port: 22,
             username: "root".into(),
+            verbose: false,
+            timeout_secs: Some(10),
             auth: SSHAuth::PrivateKey {
                 path: PathBuf::from("~/.ssh/id_rsa"),
                 passphrase: None,
             },
-            timeout_secs: Some(30),
-            verbose: false,
         }
     }
+}
 
+impl SSHClient {
     pub fn with_port(mut self, port: impl Into<u16>) -> Self {
         self.port = port.into();
         self
@@ -61,13 +71,6 @@ impl SSHClient {
         self
     }
 }
-
-pub struct SSHConnection {
-    child: Child,
-    stdin: ChildStdin,
-    stdout: BufReader<ChildStdout>,
-}
-
 impl SSHClient {
     pub fn open_shell(&self) -> std::io::Result<SSHConnection> {
         let mut cmd = Command::new("ssh");
@@ -75,6 +78,7 @@ impl SSHClient {
         if self.verbose {
             cmd.arg("-v");
         }
+
         cmd.arg("-p").arg(self.port.to_string());
         cmd.arg(format!("{}@{}", self.username, self.destination));
 
@@ -83,11 +87,21 @@ impl SSHClient {
         }
 
         match &self.auth {
-            SSHAuth::PrivateKey { path, .. } => {
+            SSHAuth::PrivateKey {
+                path,
+                passphrase: None,
+            } => {
                 cmd.arg("-i").arg(path);
             }
             SSHAuth::Password(_) => {
                 panic!("Password auth not implemented");
+            }
+
+            SSHAuth::PrivateKey {
+                path: _,
+                passphrase: Some(_),
+            } => {
+                panic!("Passphrase is not yet supported");
             }
         }
 
@@ -97,8 +111,8 @@ impl SSHClient {
             .stderr(Stdio::inherit())
             .spawn()?;
 
-        let stdin = child.stdin.take().unwrap();
-        let stdout = BufReader::new(child.stdout.take().unwrap());
+        let stdin = child.stdin.take().expect("stdin not captured");
+        let stdout = BufReader::new(child.stdout.take().expect("stdout not captured"));
 
         Ok(SSHConnection {
             child,
@@ -109,31 +123,17 @@ impl SSHClient {
 }
 
 impl SSHConnection {
-    pub fn exec(&mut self, command: &str) -> std::io::Result<String> {
-        const SENTINEL: &str = "__COMMAND_UNIT_DONE__";
-
-        // We echo the sentinel back as a way to determine that a value is returned
-        log::debug!("Sending command over SSH: {}", command);
-        writeln!(self.stdin, "{}; echo {}", command, SENTINEL)?;
-        self.stdin.flush()?;
-
-        let mut output = String::new();
-
-        for line in self.stdout.by_ref().lines() {
-            let line = line?;
-            if line.trim() == SENTINEL {
-                break;
-            }
-            output.push_str(&line);
-            output.push('\n');
-        }
-        
-        log::trace!("Command output received (len: {})", output.len());
-
-        Ok(output)
-    }
-
     pub fn child(&self) -> &Child {
         &self.child
+    }
+}
+
+impl ShellTransport for SSHConnection {
+    fn stdin(&mut self) -> &mut dyn std::io::Write {
+        &mut self.stdin
+    }
+
+    fn stdout(&mut self) -> &mut dyn std::io::BufRead {
+        &mut self.stdout
     }
 }
