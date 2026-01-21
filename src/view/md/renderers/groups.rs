@@ -1,4 +1,4 @@
-fn generate_groups_section(
+pub fn generate_groups_section(
     content: &mut String,
     groups: &Option<Vec<crate::model::security::acesss_control::SystemGroup>>,
 ) {

@@ -6,4 +6,5 @@ pub mod services;
 pub mod hardware;
 pub mod common;
 pub mod follow_up;
+pub mod disk;
 

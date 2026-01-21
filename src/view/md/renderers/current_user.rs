@@ -1,5 +1,5 @@
 use std::fmt::Write;
-fn generate_current_user_section(
+pub fn generate_current_user_section(
     content: &mut String,
     current_user: &Option<crate::model::security::acesss_control::SystemUser>,
 ) {

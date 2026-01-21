@@ -1,10 +1,7 @@
-use std::{
-    env::{self, args},
-    io::stdout,
-};
+use std::env::{self};
 
 use hostprint::{
-    commands::{basic, firewall, hardware, package, services},
+    commands::{basic, disk, firewall, hardware, package, services},
     connection::{
         common::{exec, ShellTransport},
         local::LocalBash,
@@ -14,6 +11,7 @@ use hostprint::{
     view::md::md::Md,
 };
 use log::{debug, info, LevelFilter};
+use serde::de::value;
 use simplelog::{ColorChoice, Config, TermLogger, TerminalMode};
 
 fn get_arg_value(flag: &str) -> Option<String> {
@@ -118,20 +116,25 @@ fn main() -> std::io::Result<()> {
 
     let mut host = Host::new();
 
-    let units = vec![
+    let mut units = vec![
         basic::default_units(),
-        package::package_units(),
-        firewall::firewall_units(),
-        services::running_services_units(),
-        hardware::hardware_units(),
-    ]
-    .concat();
+        //        package::package_units(),
+        //        firewall::firewall_units(),
+        //        services::running_services_units(),
+        //        hardware::hardware_units(),
+    ];
+
+    // disk operations are slow so it makes sense to keep it seperated especially before  paralel
+    // operations are implemented
+    if let Some(_) = get_arg_value("--disk") {
+        units.push(disk::units());
+    };
 
     debug!("Collected {} units to execute", units.len());
 
     let mut shell = client.open_shell()?;
 
-    for unit in units.iter() {
+    for unit in units.concat().iter() {
         info!("Executing unit: {}", unit.name);
         println!("\n=== {} ===", unit.name);
 
