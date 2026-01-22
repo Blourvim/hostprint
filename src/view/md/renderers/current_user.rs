@@ -147,8 +147,8 @@ mod tests {
         println!("Generated Content (Missing Fields):\n{}", content);
 
         assert!(content.contains("## Current User"));
-        assert!(content.contains("| UID | 0 |")); 
-        assert!(content.contains("| GID | 0 |")); 
+        assert!(content.contains("| UID | 0 |"));
+        assert!(content.contains("| GID | 0 |"));
         assert!(content.contains("| Username | N/A |"));
         assert!(content.contains("| Home Directory | N/A |"));
         assert!(content.contains("| Groups | N/A |"));
@@ -189,7 +189,7 @@ mod tests {
             .lines()
             .find(|line| line.contains("| Groups |"))
             .expect("Should contain groups line");
-        assert!(group_line.contains("| Groups |  |")); 
+        assert!(group_line.contains("| Groups |  |"));
     }
 
     #[test]
@@ -197,7 +197,7 @@ mod tests {
         let mut groups = HashSet::new();
         groups.insert(SystemGroup {
             gid: Some(999),
-            name: None, 
+            name: None,
         });
         groups.insert(SystemGroup {
             gid: Some(1000),
@@ -222,7 +222,6 @@ mod tests {
             .find(|line| line.contains("| Groups |"))
             .expect("Should contain groups line");
         assert!(group_line.contains("validgroup"));
-        assert!(!group_line.contains("999")); 
+        assert!(!group_line.contains("999"));
     }
-
 }

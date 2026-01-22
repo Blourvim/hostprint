@@ -33,6 +33,5 @@ impl Md {
         generate_os_section(content, &host.os);
         generate_active_sessions_section(content, &host.sessions);
         generate_sockets_section(content, &host.sockets);
-        println!("{:?}", content)
     }
 }
