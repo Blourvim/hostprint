@@ -25,6 +25,7 @@ pub fn generate_current_user_section(
             .unwrap();
 
             if let Some(groups) = &user.groups {
+
                 let group_names: Vec<String> = groups
                     .iter()
                     .filter_map(|g| g.name.as_ref())

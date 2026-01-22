@@ -112,8 +112,25 @@ pub fn getent_passwd_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     }
 }
 
-pub fn id_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
-    let _facts = IdFacts::from_std(stdout.into());
+pub fn id_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
+    if let Some(facts) = IdFacts::from_std(stdout.into()) {
+        if let Some(user) = host.current_user.as_mut() {
+            user.name = Some(facts.name);
+            user.uid = Some(facts.uid);
+            user.gid = Some(facts.guid);
+
+            let groups = user
+                .groups
+                .get_or_insert_with(std::collections::HashSet::new);
+
+            for f in facts.groups {
+                groups.insert(SystemGroup {
+                    name: Some(f.name),
+                    gid: Some(f.gid),
+                });
+            }
+        }
+    }
 }
 
 pub fn uptime_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
