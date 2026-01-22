@@ -125,6 +125,7 @@ pub fn uptime_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
             load_average: Some(facts.load_average),
         };
 
+        println!("{:?}", metrics);
         host.metrics = Some(metrics)
     }
 }
@@ -152,7 +153,6 @@ pub fn w_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
 
 pub fn df_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = DfFacts::from_std(stdout.into());
-
 }
 
 pub fn du_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
@@ -162,6 +162,10 @@ pub fn du_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
 pub fn ss_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = SsFacts::from_std(stdout.into());
 }
-pub fn whoami_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
-    let _facts = WhoamiFacts::from_std(stdout.into());
+pub fn whoami_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
+    if let Ok(facts) = WhoamiFacts::from_std(stdout.into()) {
+        host.current_user
+            .as_mut()
+            .map(|user| user.name = Some(facts.username));
+    }
 }
