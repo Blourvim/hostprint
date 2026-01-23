@@ -15,14 +15,8 @@ pub fn generate_os_section(content: &mut String, os: &Option<OSInfo>) {
 
     writeln!(
         content,
-        "| Name | {} |",
-        os.name.as_deref().unwrap_or("N/A")
-    )
-    .unwrap();
-    writeln!(
-        content,
-        "| Version | {} |",
-        os.version.as_deref().unwrap_or("N/A")
+        "| Architecture | {} |",
+        os.arch.as_deref().unwrap_or("N/A")
     )
     .unwrap();
     writeln!(
@@ -31,6 +25,7 @@ pub fn generate_os_section(content: &mut String, os: &Option<OSInfo>) {
         os.family.as_deref().unwrap_or("N/A")
     )
     .unwrap();
+
     writeln!(
         content,
         "| Kernel | {} |",
@@ -39,8 +34,15 @@ pub fn generate_os_section(content: &mut String, os: &Option<OSInfo>) {
     .unwrap();
     writeln!(
         content,
-        "| Architecture | {} |",
-        os.arch.as_deref().unwrap_or("N/A")
+        "| Version | {} |",
+        os.version.as_deref().unwrap_or("N/A")
+    )
+    .unwrap();
+
+    writeln!(
+        content,
+        "| Name | {} |",
+        os.name.as_deref().unwrap_or("N/A")
     )
     .unwrap();
 }
