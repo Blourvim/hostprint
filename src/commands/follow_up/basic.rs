@@ -154,7 +154,6 @@ pub fn uptime_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
             load_average: Some(facts.load_average),
         };
 
-        println!("{:?}", metrics);
         host.metrics = Some(metrics)
     }
 }

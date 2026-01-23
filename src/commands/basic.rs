@@ -32,7 +32,7 @@ pub fn default_units() -> Vec<Unit> {
         Unit::new("Users", "getent passwd", getent_passwd_follow_up),
         Unit::new("User Info", "id", id_follow_up),
         // TODO uptime for containers out of scope for now
-        Unit::new("Uptime", "uptime", uptime_follow_up),
+        Unit::new("Uptime", "uptime --raw", uptime_follow_up),
         // TODO w for containers out of scope for now
         Unit::new("Logged-in Users", "w -h ", w_follow_up),
         Unit::new("Open Ports", "ss -HtulnpO", ss_follow_up),

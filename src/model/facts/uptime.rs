@@ -26,6 +26,7 @@ impl UptimeFacts {
     pub fn from_std(output: &str) -> Option<Self> {
         let mut parts = output.split_whitespace();
 
+        println!("{:?}",output);
         let seconds_time = parts.next()?.parse::<u32>().ok()?;
         let uptime_seconds = parts.next()?.parse::<f64>().ok()?;
         let users_logged_in = parts.next()?.parse::<u32>().ok()?;
