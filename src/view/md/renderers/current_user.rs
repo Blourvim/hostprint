@@ -9,8 +9,23 @@ pub fn generate_current_user_section(
         Some(user) => {
             writeln!(content, "| Field | Value |").unwrap();
             writeln!(content, "|-------|-------|").unwrap();
-            writeln!(content, "| UID | {} |", user.uid.unwrap_or(0)).unwrap();
-            writeln!(content, "| GID | {} |", user.gid.unwrap_or(0)).unwrap();
+            writeln!(
+                content,
+                "| UID | {} |",
+                user.uid
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "N/A".to_string())
+            )
+            .unwrap();
+
+            writeln!(
+                content,
+                "| GID | {} |",
+                user.gid
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "N/A".to_string())
+            )
+            .unwrap();
             writeln!(
                 content,
                 "| Username | {} |",
@@ -25,7 +40,6 @@ pub fn generate_current_user_section(
             .unwrap();
 
             if let Some(groups) = &user.groups {
-
                 let group_names: Vec<String> = groups
                     .iter()
                     .filter_map(|g| g.name.as_ref())

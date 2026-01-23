@@ -2,9 +2,8 @@ use crate::commands::{
     common::noop::noop_follow_up,
     follow_up::{
         basic::{
-            df_follow_up, du_follow_up, getent_passwd_follow_up, groups_follow_up, id_follow_up,
-            os_release_follow_up, ss_follow_up, uname_follow_up, uptime_follow_up, w_follow_up,
-            whoami_follow_up,
+            getent_passwd_follow_up, groups_follow_up, id_follow_up, os_release_follow_up,
+            ss_follow_up, uname_follow_up, uptime_follow_up, w_follow_up, whoami_follow_up,
         },
         network::network_interfaces_follow_up,
     },
@@ -14,6 +13,7 @@ use crate::commands::{
 pub fn default_units() -> Vec<Unit> {
     return vec![
         Unit::new("Hostname", "hostname", noop_follow_up),
+        Unit::new("Current User", "whoami", whoami_follow_up),
         // This ensures reliable parsing, uname -snrvmpio returns unreliable spacing
         //https://www.man7.org/linux/man-pages/man1/uname.1.html
         Unit::new(
@@ -41,7 +41,6 @@ pub fn default_units() -> Vec<Unit> {
             "ip addr",
             network_interfaces_follow_up,
         ),
-        Unit::new("Current User", "whoami", whoami_follow_up),
         Unit::new("Groups", "groups", groups_follow_up),
     ];
 }

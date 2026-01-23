@@ -116,7 +116,7 @@ fn main() -> std::io::Result<()> {
     let mut host = Host::new();
 
     let mut units = vec![
-        basic::default_units(),
+       basic::default_units(),
         //        package::package_units(),
         //        firewall::firewall_units(),
         //        services::running_services_units(),
@@ -135,7 +135,7 @@ fn main() -> std::io::Result<()> {
 
     for unit in units.concat().iter() {
         info!("Executing unit: {}", unit.name);
-        println!("\n=== {} ===", unit.name);
+        //println!("\n=== {} ===", unit.name);
 
         let stdout = exec(shell.as_mut(), &unit.command)?;
         debug!("Output for {}: {}", unit.name, stdout.trim());
@@ -151,6 +151,5 @@ fn main() -> std::io::Result<()> {
         Some(_) => {}
         None => println!("{:#?}", host),
     }
-
     Ok(())
 }

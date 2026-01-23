@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::model::facts::groups::GroupsFacts;
 use crate::model::facts::whoami::WhoamiFacts;
 use crate::model::{
@@ -93,27 +95,20 @@ pub fn getent_passwd_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
 
     // Merge with existing host.users if it exists
     if let Some(existing_users) = &mut host.users {
-        existing_users.extend(system_users);
+        existing_users.extend(system_users.clone());
     } else {
-        host.users = Some(system_users);
+        host.users = Some(system_users.clone());
     }
 
-    // Optionally, we could guess "current user" by UID == 0 or matching `whoami`
-    if host.current_user.is_none() {
-        // crude heuristic: root or first user
-        let maybe_current = host
-            .users
-            .as_ref()
-            .and_then(|u| u.iter().find(|usr| usr.uid == Some(0)))
-            .cloned()
-            .or_else(|| host.users.as_ref().and_then(|u| u.first().cloned()));
-
-        host.current_user = maybe_current;
+    if let Some(curr_user) = host.current_user.as_mut() {
+        if let Some(sys_user) = &system_users.iter().find(|p| p.name == curr_user.name) {
+            curr_user.home = sys_user.home.clone();
+        }
     }
 }
 
 pub fn id_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
-    if let Some(facts) = IdFacts::from_std(stdout.into()) {
+    if let Some(facts) = IdFacts::from_std(stdout) {
         if let Some(user) = host.current_user.as_mut() {
             user.name = Some(facts.name);
             user.uid = Some(facts.uid);
@@ -129,6 +124,23 @@ pub fn id_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
                     gid: Some(f.gid),
                 });
             }
+        } else {
+            host.current_user = Some(SystemUser {
+                name: Some(facts.name),
+                uid: Some(facts.uid),
+                gid: Some(facts.guid),
+                home: None,
+                groups: Some(
+                    facts
+                        .groups
+                        .into_iter()
+                        .map(|f| SystemGroup {
+                            name: Some(f.name),
+                            gid: Some(f.gid),
+                        })
+                        .collect::<HashSet<SystemGroup>>(),
+                ),
+            })
         }
     }
 }
@@ -181,8 +193,18 @@ pub fn ss_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
 }
 pub fn whoami_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     if let Ok(facts) = WhoamiFacts::from_std(stdout.into()) {
-        host.current_user
-            .as_mut()
-            .map(|user| user.name = Some(facts.username));
+        if let Some(_) = &host.current_user {
+            host.current_user
+                .as_mut()
+                .map(|user| user.name = Some(facts.username));
+        } else {
+            host.current_user = Some(SystemUser {
+                uid: None,
+                gid: None,
+                name: Some(facts.username),
+                home: None,
+                groups: None,
+            })
+        }
     }
 }

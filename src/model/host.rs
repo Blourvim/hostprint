@@ -31,6 +31,7 @@ pub struct Host {
     pub current_user: Option<SystemUser>,
     pub os: Option<OSInfo>,
     pub hardware: Option<Hardware>,
+    // TODO: These should ideally be a Hashset instead
     pub users: Option<Vec<SystemUser>>,
     pub groups: Option<Vec<SystemGroup>>,
     pub package_managers: HashSet<PackageManager>,
