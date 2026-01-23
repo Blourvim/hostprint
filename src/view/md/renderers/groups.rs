@@ -12,7 +12,10 @@ pub fn generate_groups_section(
             content.push_str("| --- | ---------- |\n");
 
             for group in groups {
-                let gid = group.gid.unwrap_or(0);
+                let gid = group
+                    .gid
+                    .map(|f| f.to_string())
+                    .unwrap_or_else(|| "N/A".to_string());
                 let name = group.name.as_deref().unwrap_or("N/A");
 
                 content.push_str(&format!("| {} | {} |\n", gid, name));
