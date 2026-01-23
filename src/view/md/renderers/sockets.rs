@@ -41,9 +41,9 @@ pub fn generate_sockets_section(content: &mut String, sockets: &Option<Vec<Socke
             local,
             remote,
             s.state,
-            s.process.pid.unwrap_or(0),
-            s.process.uid.unwrap_or(0),
-            s.process.gid.unwrap_or(0),
+            s.process.pid.map(|v| v.to_string()).unwrap_or("N/A".into()),
+            s.process.uid.map(|v| v.to_string()).unwrap_or("N/A".into()),
+            s.process.gid.map(|v| v.to_string()).unwrap_or("N/A".into()),
             s.interface.as_deref().unwrap_or("N/A"),
         )
         .unwrap();

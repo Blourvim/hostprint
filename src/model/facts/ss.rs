@@ -17,14 +17,14 @@ pub struct SsEntry {
 }
 
 impl SsFacts {
-    pub fn from_std(output: &str) -> SsFacts {
+    pub fn from_std(output: &str) -> Option<SsFacts> {
         let entries: Vec<SsEntry> = output
             .lines()
             .filter(|l| !l.trim().is_empty())
             .filter_map(|line| SsEntry::from_line(line).ok())
             .collect();
 
-        SsFacts { entries }
+        Some(SsFacts { entries })
     }
 
     pub fn from_entries(entries: Vec<SsEntry>) -> SsFacts {

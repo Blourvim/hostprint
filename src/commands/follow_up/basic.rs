@@ -1,7 +1,10 @@
+use crate::model::network::socket::Process;
+use crate::model::network::socket::Protocol;
 use std::collections::HashSet;
 
 use crate::model::facts::groups::GroupsFacts;
 use crate::model::facts::whoami::WhoamiFacts;
+use crate::model::network::socket::Socket;
 use crate::model::{
     facts::{
         df::DfFacts, du::DuFacts, id::IdFacts, os_release::OsReleaseFacts,
@@ -16,6 +19,24 @@ use crate::model::{
     },
 };
 
+fn split_address(addr: &str) -> (String, Option<u16>) {
+    // IPv6 addresses are like [::1]:443
+    if let Some(stripped) = addr.strip_prefix('[') {
+        if let Some(end) = stripped.find(']') {
+            let ip = &stripped[..end];
+            let rest = &stripped[end + 1..];
+            let port = rest.strip_prefix(':').and_then(|p| p.parse().ok());
+            return (ip.to_string(), port);
+        }
+    }
+
+    // IPv4 or wildcard
+    if let Some((ip, port)) = addr.rsplit_once(':') {
+        return (ip.to_string(), port.parse().ok());
+    }
+
+    (addr.to_string(), None)
+}
 pub fn groups_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     let facts = GroupsFacts::from_str(stdout);
     let groups: Vec<SystemGroup> = facts
@@ -187,8 +208,63 @@ pub fn du_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
     let _facts = DuFacts::from_std(stdout.into());
 }
 
-pub fn ss_follow_up(stdout: &str, _stderr: &str, _host: &mut Host) -> () {
-    let _facts = SsFacts::from_std(stdout.into());
+pub fn ss_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
+    let facts = match SsFacts::from_std(stdout) {
+        Some(f) => f,
+        None => return,
+    };
+
+    let mut sockets = Vec::new();
+
+    for entry in facts.entries {
+        let (local_addr, local_port) = split_address(&entry.local_address);
+        let (remote_addr, remote_port) = split_address(&entry.peer_address);
+
+        let protocol = match entry.protocol.as_str() {
+            "tcp" => Protocol::Tcp,
+            "udp" => Protocol::Udp,
+            "tcp6" => Protocol::Tcp6,
+            "udp6" => Protocol::Udp6,
+            _ => continue, // unknown protocol
+        };
+
+        let socket = Socket {
+            protocol,
+
+            address: local_addr,
+            port: local_port.unwrap_or(0),
+
+            remote_address: if entry.peer_address != "*" {
+                Some(remote_addr)
+            } else {
+                None
+            },
+            remote_port,
+
+            state: entry.state,
+
+            process: Process {
+                pid: None,
+                uid: None,
+                gid: None,
+            },
+
+            inode: 0,
+            rx_queue: entry.recv_q as u32,
+            tx_queue: entry.send_q as u32,
+            flags: 0,
+
+            timer_active: 0,
+            timer_expire: 0,
+            retransmits: 0,
+
+            interface: None,
+        };
+
+        sockets.push(socket);
+    }
+
+    host.sockets = Some(sockets);
 }
 pub fn whoami_follow_up(stdout: &str, _stderr: &str, host: &mut Host) {
     if let Ok(facts) = WhoamiFacts::from_std(stdout.into()) {
